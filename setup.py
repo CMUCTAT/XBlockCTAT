@@ -18,7 +18,7 @@ def package_data(pkg, roots):
         for dirname, _, files in os.walk(os.path.join(pkg, root)):
             for fname in files:
                 totalPath = os.path.relpath(os.path.join(dirname, fname), pkg)
-                print 'File: %s ' % totalPath
+                # print 'File: %s ' % totalPath
                 data.append(totalPath)
 
     return {pkg: data}

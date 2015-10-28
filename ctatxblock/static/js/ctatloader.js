@@ -115,6 +115,8 @@ function dumpOLIEnvironment ()
 function loadCTAT ()
 {
 	console.log ("loadCTAT () Loading for target: " + CTATTarget);	
+	
+	var win = window.frameElement;
 
 	/*
 	* Check to see if we're running on the OLI platforms ...
@@ -170,7 +172,10 @@ function loadCTAT ()
 	*/	
 	if (CTATTarget=="SCORM")
 	{	
-
+		loadjscssfile ("APIWrapper.js","js");
+		loadjscssfile ("dolmsfunctions.js","js");	
+		loadjscssfile ("scormfs.js","js");	
+		
 		return;
 	}	
 	
@@ -187,16 +192,21 @@ function loadCTAT ()
 	*
 	*/		 
 	if (CTATTarget=="XBlock")
-	{
+	{	
 		FlashVars ['DeliverUsingOLI']='true';
 		FlashVars ['tutoring_service_communication']='javascript'
 		FlashVars ['user_guid']=window.self.studentId;
 		FlashVars ['baseUrl']=window.self.baseUrl;
 		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;
+		FlashVars ['question_file']=window.self.href + "/" + window.self.module + "/" + window.self.problem;
 				
 		ctatdebug ("XBlock windows.self.studentId: " + window.self.studentId);
 		ctatdebug ("XBlock windows.self.handlerBaseUrl: " + window.self.handlerBaseUrl);
-				
+		
+		FlashVars ["session_id"]=("xblocksession_"+guid());
+		
+		console.log ("Generated question_file: " + FlashVars ['question_file']);
+		
 		return;
 	}	
 
@@ -216,11 +226,13 @@ function loadCTAT ()
 */
 function initOnload ()
 {
+	useDebugging=true;
+
 	console.log ("initOnload ()");
 
 	if (CTATTarget=="OLI")
 	{		
-		useDebugging=true;
+		//useDebugging=true;
 		
 		var win = window.frameElement;
 		FlashVars ['activity_mode']=win.getAttribute("data-activitymode");
@@ -307,14 +319,7 @@ function initOnload ()
 	if (CTATTarget=="XBlock")
 	{
 		// We should aready be done here, no interaction with the server needed
-		
-		var tempFlashVars=tutorPrep (FlashVars);
-
-		if (tempFlashVars ["session_id"]=="none")
-		{	
-			tempFlashVars ["session_id"]=("xblock_"+guid());		
-		}		
-		
+				
 		initTutor ();		
 		
 		// Once all the CTAT code has been loaded allow developers to activate custom code
