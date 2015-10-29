@@ -321,6 +321,7 @@ function initOnload ()
 		// We should aready be done here, no interaction with the server needed
 				
 		initTutor ();		
+		initOnload ();
 		
 		// Once all the CTAT code has been loaded allow developers to activate custom code
 		// All developers would have to do is provde the method called 'init'. This is a
