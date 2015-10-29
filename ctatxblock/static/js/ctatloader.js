@@ -205,7 +205,7 @@ function loadCTAT ()
 		
 		FlashVars ["session_id"]=("xblocksession_"+guid());
 		
-		console.log ("Generated question_file: " + FlashVars ['question_file']);
+		ctatdebug ("Generated question_file: " + FlashVars ['question_file']);
 		
 		return;
 	}	
@@ -409,6 +409,7 @@ $(document).ready(function()
 		if (window ['XBlock'])
 		{
 			CTATTarget="XBlock";
+			return;
 		}
 	}
 
