@@ -3,7 +3,10 @@
 #
 # -------------------------------------------------------------------
 
+import os
+import pprint
 import pkg_resources
+import base64
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
@@ -33,8 +36,11 @@ class CTATXBlock(XBlock):
     remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.settings)
     connection = String(help="", default="javascript", scope=Scope.settings)
 
-    src = String(help = "URL for MP3 file to play", scope = Scope.settings )	
-	
+    src = String(help = "URL for MP3 file to play", scope = Scope.settings )
+
+    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
+    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
+
     def resource_string(self, path):
         data = pkg_resources.resource_string(__name__, path)        
         return data.decode("utf8")
@@ -50,15 +56,9 @@ class CTATXBlock(XBlock):
         frag.add_css(self.resource_string("static/css/ctatxblock.css"))
         frag.add_javascript(self.resource_string("static/js/ctat.min.js"))
         frag.add_javascript(self.resource_string("static/js/ctatloader.js"))
+        frag.add_content (self.resource_string("static/html/body.html"));
         frag.initialize_js('CTATXBlock')
         return frag
-
-#    def student_view(self, context=None):
-#        html = self.resource_string("static/html/ctatstudio.html")
-#        frag = Fragment(html.format(src=self.src))
-#        frag.add_css(self.resource_string("static/css/ctatstudio.css"))
-#        frag.initialize_js('CTATXBlock')
-#        return frag
     
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
@@ -72,7 +72,58 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
+        print 'studio_submit()'
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(data)
         self.src = data.get('src')
+        return {'result': 'success'}
+
+    @XBlock.json_handler
+    def ctat_set_variable(self, data, suffix=''):
+        print 'ctat_set_variable()'
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(data)
+
+        for key in data:
+            value = base64.b64decode(data[key])
+            print("Setting ({}) to ({})".format(key, value))
+            if (key=="href"):
+               self.href = value
+            if (key=="module"):
+               self.module = value
+            if (key=="name"):
+               self.name = value
+            if (key=="problem"):
+               self.problem = value
+            if (key=="dataset"):
+               self.dataset = value
+            if (key=="level1"):
+               self.level1 = value
+            if (key=="type1"):
+               self.type1 = value
+            if (key=="level2"):
+               self.level2 = value
+            if (key=="type2"):
+               self.type2 = value
+            if (key=="logurl"):
+               self.logurl = value
+            if (key=="logtype"):
+               self.logtype = value
+            if (key=="diskdir"):
+               self.diskdir = value
+            if (key=="port"):
+               self.port = value
+            if (key=="remoteurl"):
+               self.remoteurl = value
+            if (key=="connection"):
+               self.connection = value
+            if (key=="src"):
+               self.src = value
+            if (key=="saveandrestore"):
+               self.saveandrestore = value
+            if (key=="skillstring"):
+              self.skillstring = value
+
         return {'result': 'success'}
 
     # -------------------------------------------------------------------

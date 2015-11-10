@@ -106,7 +106,8 @@ function dumpOLIEnvironment ()
 	console.log ("OLI resource_type_id: (data-resourcetypeid)" + win.getAttribute("data-resourcetypeid"));
 	console.log ("OLI session_id: (data-sessionid)" + win.getAttribute("data-sessionid"));
 	console.log ("OLI superactivity_url: (data-superactivityserver)" + win.getAttribute("data-superactivityserver"));
-	console.log ("OLI superactivity_url: (data-activitycontextguid)" + win.getAttribute("data-activitycontextguid"));	
+	console.log ("OLI activity_guid: (data-activityguid)" + win.getAttribute("data-activityguid"));	
+	console.log ("OLI user_guid: (data-userguid)" + win.getAttribute("data-userguid"));
 }
 
 /**
@@ -127,7 +128,7 @@ function loadCTAT ()
 		FlashVars ['SessionLog']='false';
 		FlashVars ['DeliverUsingOLI']='true';
 		FlashVars ['tutoring_service_communication']='javascript';
-	
+			
 		//loadjscssfile ("css/themes/default/easyui.css","css");
 		//loadjscssfile ("css/themes/icon.css","css");
 		//loadjscssfile ("css/CTAT.css","css");
@@ -142,8 +143,7 @@ function loadCTAT ()
 		//loadjscssfile ("jquery/jquery.easyui.min.js","js");	
 		
 		loadjscssfile ("ctatjslib/ctat.min.js","js");
-		//loadjscssfile ("CTATForBrowsers.js","js");
-		
+	
 		return;
 	}
 	
@@ -189,12 +189,15 @@ function loadCTAT ()
 	}
 
 	/*
-	*
+	* Execution in an XBlock environment is a bit different than the others. Once the XBlock Js
+	* code executes (CTATXBlock.js) the loader (by calling loadCTAT ()) we should immediately 
+	* continue with the rest of the execution since we do not know what else is happening on an 
+	* EdX page related to load and ready as jQuery defines them.
 	*/		 
 	if (CTATTarget=="XBlock")
 	{	
 		FlashVars ['DeliverUsingOLI']='true';
-		FlashVars ['tutoring_service_communication']='javascript'
+		FlashVars ['tutoring_service_communication']='javascript';
 		FlashVars ['user_guid']=window.self.studentId;
 		FlashVars ['baseUrl']=window.self.baseUrl;
 		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;
@@ -243,9 +246,25 @@ function initOnload ()
 		FlashVars ['auth_token']=win.getAttribute("data-authenticationtoken");
 		FlashVars ['resource_type_id']=win.getAttribute("data-resourcetypeid");
 		FlashVars ['session_id']=win.getAttribute("data-sessionid");
-		FlashVars ['superactivity_url']=win.getAttribute("data-superactivityserver");
-		FlashVars ['data-activitycontextguid']=win.getAttribute("data-activitycontextguid");
+		FlashVars ['superactivity_url']=win.getAttribute("data-superactivityserver");		
+		FlashVars ['activity_guid']=win.getAttribute("data-activityguid");
+		FlashVars ['deliverymode']=win.getAttribute("data-activitymode");
+		FlashVars ['datamode']=win.getAttribute("data-mode");
+		FlashVars ['user_guid']=win.getAttribute("data-userguid");
 		
+		if (!FlashVars ['activity_context_guid'])
+		{
+			FlashVars ['activity_context_guid']="undefined";		
+		}		
+		
+		if (FlashVars ['activity_mode'])
+		{
+			if (FlashVars ['activity_mode']=='review')
+			{
+				FlashVars ['activity_context_guid']="undefined";
+			}
+		}		
+				
 		var tempFlashVars=tutorPrep (FlashVars);
 
 		if (tempFlashVars ["session_id"]=="none")
@@ -323,21 +342,7 @@ function initOnload ()
 		// We should aready be done here, no interaction with the server needed
 				
 		initTutor ();		
-		
-		// Once all the CTAT code has been loaded allow developers to activate custom code
-		// All developers would have to do is provde the method called 'init'. This is a
-		// better way of managing the order of execution since the ready function essentially
-		// overwrites the body onLoad function		
-		
-		if (window.hasOwnProperty('ctatOnload'))
-		{
-			window ['ctatOnload']();	
-		}
-		else
-		{
-			console.log ("Error: window.ctatOnload is not available");
-		}
-		
+
 		return;	
 	}	
 	
@@ -404,14 +409,22 @@ function OLIReady ()
 
 $(document).ready(function() 
 {
-	console.log ("ready ()");
+	console.log ("ready ("+CTATTarget+")");
 	
 	if (CTATTarget=="CTAT")
 	{
+		console.log ("Checking target: " + CTATTarget);
+	
 		if (window ['XBlock'])
 		{
+			console.log ("Forcing target platform to be XBlock, loadCTAT () will be called by the EdX Xblock code ...");
+			
 			CTATTarget="XBlock";
 			return;
+		}
+		else
+		{
+			console.log ("window ['XBlock'] is not XBlock: " + window ['XBlock']);
 		}
 	}
 
@@ -420,13 +433,20 @@ $(document).ready(function()
 
 $(window).load(function() 
 {
-	console.log ("load () -- to not display scrim");
-	//	CTATScrim.scrim.waitScrimUp ();
+	console.log ("load ()");
 	
 	//useDebugging=true;	
 	
 	// Load any static resources you need for this tutor. For example the OLI version
 	// uses this time to generate a static reference to the BRD file so that it can
 	// assign it to the question_file FlashVar
-	initOnload ();
+	
+	if (CTATTarget=="XBlock")
+	{
+		console.log ("We should not call initOnload in the XBlock case since that is all driven by CTATXBlock and the loadCTAT code above");
+	}
+	else
+	{
+		initOnload ();
+	}	
 });
