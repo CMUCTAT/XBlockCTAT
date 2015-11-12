@@ -99,3 +99,27 @@ canvas
 	width:40px;
 	margin-top:5px;
 }
+
+.testA
+{
+	border: 1px solid #aaaaaa;
+	background: #ffffff url(testa.png);
+}
+
+.testB
+{
+	border: 1px solid #aaaaaa;
+	background: #ffffff url(images/testb.png);
+}
+
+.testC
+{
+	border: 1px solid #aaaaaa;
+	background: #ffffff url(public/testc.png);
+}
+
+.testD
+{
+	border: 1px solid #aaaaaa;
+	background: #ffffff url(public/images/testd.png);
+}

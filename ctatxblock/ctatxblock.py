@@ -22,7 +22,7 @@ class CTATXBlock(XBlock):
     # self.<fieldname>.
     href = String(help="URL to a BRD file", default="http://augustus.pslc.cs.cmu.edu/html5/", scope=Scope.settings)
     module = String(help="The learning module to load from", default="HTML5TestFiles", scope=Scope.settings)
-    name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)	
+    name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)
     problem = String(help="The name of a BRD file", default="1416-worked.brd", scope=Scope.settings)
     dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.settings)
     level1 = String(help="Level name to log", default="unit1", scope=Scope.settings)
@@ -85,7 +85,8 @@ class CTATXBlock(XBlock):
         #pp.pprint(data)
 
         for key in data:
-            value = base64.b64decode(data[key])
+            #value = base64.b64decode(data[key])
+            value = data[key]
             print("Setting ({}) to ({})".format(key, value))
             if (key=="href"):
                self.href = value
