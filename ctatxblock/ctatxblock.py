@@ -45,17 +45,24 @@ class CTATXBlock(XBlock):
         data = pkg_resources.resource_string(__name__, path)        
         return data.decode("utf8")
 
+    def bind_path (self, text):
+        tbase=self.runtime.local_resource_url (self,"public/ref.css")
+        base=tbase[:-7]
+        return (text.replace ("[xblockbase]",base))
+
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
 
     def student_view(self, context=None):
+        baseURL=self.runtime.local_resource_url (self,"public/problem_files/ref.css");
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment(html.format(self=self))
-        frag.add_css(self.resource_string("static/css/ctat.css"))
-        frag.add_css(self.resource_string("static/css/ctatxblock.css"))
-        frag.add_javascript(self.resource_string("static/js/ctat.min.js"))
-        frag.add_javascript(self.resource_string("static/js/ctatloader.js"))
+        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctat.css"))
+        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatxblock.css"))
+        frag.add_javascript ("var baseURL=\""+(baseURL [:-7])+"\";")
+        frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctat.min.js"))
+        frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctatloader.js"))
         frag.add_content (self.resource_string("static/html/body.html"));
         frag.initialize_js('CTATXBlock')
         return frag
