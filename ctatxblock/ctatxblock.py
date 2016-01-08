@@ -60,6 +60,7 @@ class CTATXBlock(XBlock):
         tbase=self.runtime.local_resource_url (self,"public/ref.css")
         self.logdebug (self,'local_resource_url: ' + tbase)
         base=tbase[:-7]
+        self.logdebug (self,'local_resource_url (adjusted): ' + base)
         return (text.replace ("[xblockbase]",base))
 
     # -------------------------------------------------------------------
