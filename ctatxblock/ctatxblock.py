@@ -50,6 +50,14 @@ class CTATXBlock(XBlock):
         base=tbase[:-7]
         return (text.replace ("[xblockbase]",base))
 
+    def logdebug (self, aMessage):
+        global dbgopen, tmp_file
+        if (dbgopen==False):
+            tmp_file = open("/tmp/edx-tmp-log.txt", "w", 0)
+            dbgopen=True
+        tmp_file.write (aMessage + "\n")
+        #print (aMessage + "\n")
+
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
