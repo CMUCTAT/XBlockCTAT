@@ -51,6 +51,7 @@ class CTATXBlock(XBlock):
 
     def bind_path (self, text):
         tbase=self.runtime.local_resource_url (self,"public/ref.css")
+        log.error('local_resource_url: ' + tbase)
         base=tbase[:-7]
         return (text.replace ("[xblockbase]",base))
 
