@@ -7,6 +7,7 @@ import os
 import pprint
 import pkg_resources
 import base64
+import socket
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
@@ -67,6 +68,8 @@ class CTATXBlock(XBlock):
 
     def student_view(self, context=None):
         self.logdebug ("student_view ()")
+        self.logdebug ("Hostname: " + socket.getfqdn())
+        self.logdebug ("Base URL: " + self.runtime.local_resource_url(self, 'public/'))
         baseURL=self.runtime.local_resource_url (self,"public/problem_files/ref.css");
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment(html.format(self=self))
