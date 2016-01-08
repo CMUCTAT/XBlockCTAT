@@ -12,6 +12,9 @@ from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 
+dbgopen=False;
+tmp_file=None;
+
 # -------------------------------------------------------------------
 #
 #
