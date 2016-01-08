@@ -55,6 +55,7 @@ class CTATXBlock(XBlock):
     # -------------------------------------------------------------------
 
     def student_view(self, context=None):
+        self.logdebug ("student_view ()")
         baseURL=self.runtime.local_resource_url (self,"public/problem_files/ref.css");
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment(html.format(self=self))
@@ -70,16 +71,17 @@ class CTATXBlock(XBlock):
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
-    def studio_view(self, context=None):        
+    def studio_view(self, context=None):
+        self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(src=self.src))
-        frag.add_css(self.resource_string("static/css/ctatstudio.css"))
+        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
         frag.initialize_js('CTATXBlock')        
         return frag
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
-        print 'studio_submit()'
+        #print 'studio_submit()'
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
         self.src = data.get('src')
@@ -87,7 +89,7 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
-        print 'ctat_set_variable()'
+        #print 'ctat_set_variable()'
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
 
