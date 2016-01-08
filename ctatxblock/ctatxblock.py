@@ -24,26 +24,26 @@ class CTATXBlock(XBlock):
 
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
-    href = String(help="URL to a BRD file", default="http://augustus.pslc.cs.cmu.edu/html5/", scope=Scope.settings)
-    module = String(help="The learning module to load from", default="HTML5TestFiles", scope=Scope.settings)
-    name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)
-    problem = String(help="The name of a BRD file", default="1416-worked.brd", scope=Scope.settings)
-    dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.settings)
-    level1 = String(help="Level name to log", default="unit1", scope=Scope.settings)
-    type1 = String(help="Level type to log", default="unit", scope=Scope.settings)
-    level2 = String(help="Level name to log", default="unit2", scope=Scope.settings)
-    type2 = String(help="Level type to log", default="unit", scope=Scope.settings)
-    logurl = String(help="URL of the logging service", default="http://pslc-qa.andrew.cmu.edu/log/server", scope=Scope.settings)
-    logtype = String(help="How should data be logged", default="clienttologserver", scope=Scope.settings)
-    diskdir = String(help="Directory for log files relative to the tutoring service", default=".", scope=Scope.settings)
-    port = String(help="Port used by the tutoring service", default="8080", scope=Scope.settings)
-    remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.settings)
-    connection = String(help="", default="javascript", scope=Scope.settings)
+    href = String(help="URL to a BRD file", default="http://augustus.pslc.cs.cmu.edu/html5/", scope=Scope.user_state)
+    module = String(help="The learning module to load from", default="HTML5TestFiles", scope=Scope.user_state)
+    name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.user_state)
+    problem = String(help="The name of a BRD file", default="1416-worked.brd", scope=Scope.user_state)
+    dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.user_state)
+    level1 = String(help="Level name to log", default="unit1", scope=Scope.user_state)
+    type1 = String(help="Level type to log", default="unit", scope=Scope.user_state)
+    level2 = String(help="Level name to log", default="unit2", scope=Scope.user_state)
+    type2 = String(help="Level type to log", default="unit", scope=Scope.user_state)
+    logurl = String(help="URL of the logging service", default="http://pslc-qa.andrew.cmu.edu/log/server", scope=Scope.user_state)
+    logtype = String(help="How should data be logged", default="clienttologserver", scope=Scope.user_state)
+    diskdir = String(help="Directory for log files relative to the tutoring service", default=".", scope=Scope.user_state)
+    port = String(help="Port used by the tutoring service", default="8080", scope=Scope.user_state)
+    remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.user_state)
+    connection = String(help="", default="javascript", scope=Scope.user_state)
 
-    src = String(help = "URL for MP3 file to play", scope = Scope.settings )
+    src = String(help = "URL for MP3 file to play", scope = Scope.user_state )
 
-    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.settings)
-    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.settings)
+    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
+    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
 
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
