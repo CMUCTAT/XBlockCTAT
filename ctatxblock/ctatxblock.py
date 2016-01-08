@@ -81,7 +81,11 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
+<<<<<<< HEAD
         #print 'studio_submit()'
+=======
+        print('studio_submit()')
+>>>>>>> 9fe8c21cebf62adf837cc19e4385ce0954153961
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
         self.src = data.get('src')
@@ -89,7 +93,11 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
+<<<<<<< HEAD
         #print 'ctat_set_variable()'
+=======
+        print('ctat_set_variable()')
+>>>>>>> 9fe8c21cebf62adf837cc19e4385ce0954153961
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
 

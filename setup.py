@@ -3,10 +3,10 @@
 import os
 from setuptools import setup
 
-print 'setup ()'
+print('setup ()')
 
 def package_data(pkg, roots):
-    print 'package_data()'
+    print('package_data()')
     """Generic function to find package_data.
 
     All of the files under each of the `roots` will be declared as package
@@ -42,4 +42,4 @@ setup(
     package_data=package_data("ctatxblock", ["static", "public"]),
 )
 
-print 'setup () done'
+print('setup () done')
