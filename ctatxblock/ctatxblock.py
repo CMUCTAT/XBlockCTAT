@@ -42,8 +42,8 @@ class CTATXBlock(XBlock):
 
     src = String(help = "URL for MP3 file to play", scope = Scope.settings )
 
-    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
-    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
+    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.settings)
+    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.settings)
 
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
