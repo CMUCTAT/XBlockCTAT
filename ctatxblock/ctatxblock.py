@@ -45,23 +45,22 @@ class CTATXBlock(XBlock):
     saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
     skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.content)
 
-    def resource_string(self, path):
-        data = pkg_resources.resource_string(__name__, path)        
-        return data.decode("utf8")
-
-    def bind_path (self, text):
-        tbase=self.runtime.local_resource_url (self,"public/ref.css")
-        log.error('local_resource_url: ' + tbase)
-        base=tbase[:-7]
-        return (text.replace ("[xblockbase]",base))
-
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
         if (dbgopen==False):
             tmp_file = open("/tmp/edx-tmp-log.txt", "w", 0)
             dbgopen=True
         tmp_file.write (aMessage + "\n")
-        #print (aMessage + "\n")
+
+    def resource_string(self, path):
+        data = pkg_resources.resource_string(__name__, path)        
+        return data.decode("utf8")
+
+    def bind_path (self, text):
+        tbase=self.runtime.local_resource_url (self,"public/ref.css")
+        self.logdebug (self,'local_resource_url: ' + tbase)
+        base=tbase[:-7]
+        return (text.replace ("[xblockbase]",base))
 
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
