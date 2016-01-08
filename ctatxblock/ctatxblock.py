@@ -96,7 +96,7 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
-        #print 'studio_submit()'
+        self.logdebug ('studio_submit()')
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
         self.src = data.get('src')
@@ -104,49 +104,50 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
-        #print 'ctat_set_variable()'
+        self.logdebug ("ctat_set_variable ()")
+        ### causes 500: INTERNAL SERVER ERROR ###
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
 
         for key in data:
             #value = base64.b64decode(data[key])
             value = data[key]
-            print("Setting ({}) to ({})".format(key, value))
+            self.logdebug("Setting ({}) to ({})".format(key, value))
             if (key=="href"):
                self.href = value
-            if (key=="module"):
+            elif (key=="module"):
                self.module = value
-            if (key=="name"):
+            elif (key=="name"):
                self.name = value
-            if (key=="problem"):
+            elif (key=="problem"):
                self.problem = value
-            if (key=="dataset"):
+            elif (key=="dataset"):
                self.dataset = value
-            if (key=="level1"):
+            elif (key=="level1"):
                self.level1 = value
-            if (key=="type1"):
+            elif (key=="type1"):
                self.type1 = value
-            if (key=="level2"):
+            elif (key=="level2"):
                self.level2 = value
-            if (key=="type2"):
+            elif (key=="type2"):
                self.type2 = value
-            if (key=="logurl"):
+            elif (key=="logurl"):
                self.logurl = value
-            if (key=="logtype"):
+            elif (key=="logtype"):
                self.logtype = value
-            if (key=="diskdir"):
+            elif (key=="diskdir"):
                self.diskdir = value
-            if (key=="port"):
+            elif (key=="port"):
                self.port = value
-            if (key=="remoteurl"):
+            elif (key=="remoteurl"):
                self.remoteurl = value
-            if (key=="connection"):
+            elif (key=="connection"):
                self.connection = value
-            if (key=="src"):
+            elif (key=="src"):
                self.src = value
-            if (key=="saveandrestore"):
+            elif (key=="saveandrestore"):
                self.saveandrestore = value
-            if (key=="skillstring"):
+            elif (key=="skillstring"):
               self.skillstring = value
 
         return {'result': 'success'}
