@@ -90,6 +90,7 @@ class CTATXBlock(XBlock):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(src=self.src))
+		frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
         frag.initialize_js('CTATXBlock')        
         return frag
@@ -99,7 +100,7 @@ class CTATXBlock(XBlock):
         self.logdebug ('studio_submit()')
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(data)
-        self.src = data.get('src')
+        #self.src = data.get('src')
         return {'result': 'success'}
 
     @XBlock.json_handler

@@ -13,17 +13,19 @@
   
 */ 
 
-var CTATTarget="CTAT";
+if(typeof(CTATTarget) == "undefined" || !CTATTarget)
+{
+	var CTATTarget="Default";
+}
 
 var Tutor = {}; // For XBlock (for now)
-var FlashVars =
-{
+var FlashVars = (FlashVars ? FlashVars : {
 	admit_code: "ies",
-	authenticity_token: "none",
+	authenticity_token: "",
 	auth_token: "none",
 	BehaviorRecorderMode: "AuthorTimeTutoring",
 	class_name: "Default Class",
-	curriculum_service_url: "OLI", // One of: 'OLI', 'SCORM', TutorShop url
+	curriculum_service_url: "", // One of: 'OLI', 'SCORM', TutorShop url
 	dataset_level_name: "none",
 	dataset_level_type: "ProblemSet",
 	dataset_name: "none",
@@ -64,7 +66,7 @@ var FlashVars =
 	DeliverUsingOLI: "none",
 	ssl: "off",
 	sui: ""
-};
+});
 
 /**
 * Started with an example at: // http://www.javascriptkit.com/javatutors/loadjavascriptcss.shtml
@@ -94,6 +96,26 @@ function loadjscssfile(filename, filetype)
 		console.log ("Loading: " + filename);
         document.getElementsByTagName("head")[0].appendChild(fileref)
 	}	
+};
+
+function tutorShopParams(emptyResult) {
+    var tsps = null;
+    if(window && window.frameElement && (tsps = window.frameElement.getAttribute('data-params')))
+		return jQuery.parseJSON(tsps);
+    else
+		return emptyResult;
+};
+
+if((tutorShopParams({}))["LMS"] == "TutorShop" || CTATTarget == "Default")
+{
+    if(typeof CTATTutor == "undefined" || !CTATTutor)
+    {
+        loadjscssfile("Assets/ctat.min.js","js");
+    }
+    if(!(Array.prototype.some.call(document.styleSheets, function(sheet) {return sheet.href && sheet.href.includes("CTAT.css")})))
+    {
+        loadjscssfile("Assets/CTAT.css","css");
+    }
 }
 
 /**
@@ -206,11 +228,11 @@ function loadCTAT ()
 		FlashVars ['user_guid']=window.self.studentId;
 		FlashVars ['baseUrl']=window.self.baseUrl;
 		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;
-		FlashVars ['question_file']=window.self.href + "/" + window.self.module + "/" + window.self.problem;
+		FlashVars ['question_file']=window.problem_location;//window.self.href + "/" + window.self.stattutor_module + "/" + window.self.problem;
 		
 		FlashVars ['href']=window.href;
-		FlashVars ['module']=window.module;		
-	
+		FlashVars ['module']=window.stattutor_module;		
+
 		FlashVars ['resource_spec']=window.name;
 		FlashVars ['problem']=window.problem;
 		FlashVars ['src']=window.src;
@@ -239,10 +261,10 @@ function loadCTAT ()
 		
 		initOnload ();
 		
-		if (window ['ctatOnload'])
+		if (window.hasOwnProperty('ctatOnload'))
 		{
 			ctatdebug ("Calling client provided ctatOnload ...");
-			window ['ctatOnload']();
+			window['ctatOnload']();
 		}
 		else
 		{
@@ -253,14 +275,24 @@ function loadCTAT ()
 	}	
 
 	/*
-	*
+	* The target CTAT is synonymous with TutorShop. You can use this target outside of
+	* TutorShop if you use the same directory structure for the css, js and brd files
 	*/	
-	if ((CTATTarget=="Default") || (CTATTarget=="CTAT"))
+	if (CTATTarget=="CTAT")
 	{	
-		loadjscssfile ("css/CTAT.css","css");
-		
-		loadjscssfile ("ctatjslib/ctat-tutor.min.js","js");	
-	}		
+	    loadjscssfile ("Assets/CTAT.css","css");		
+	    loadjscssfile ("Assets/ctat.min.js","js");	
+	}
+	
+	/**
+	* This target is available to you if you would like to either develop your own
+	* Learner Management System or would like to test and run your tutor standalone.
+	*/
+	if (CTATTarget=="Default")
+	{	
+	    loadjscssfile ("http://ctat.pact.cs.cmu.edu/html5releases/latest/CTAT.css","css");		
+	    loadjscssfile ("http://ctat.pact.cs.cmu.edu/html5releases/latest/ctat.min.js","js");	
+	}	
 }
 
 /**
@@ -389,31 +421,31 @@ function initOnload ()
 		flashVars.assignRawFlashVars(tempFlashVars);
 		
 		Tutor.name = window.name;
-		Tutor.webcontent = "problem_files/"+window.module+"/";
+		Tutor.webcontent = "problem_files/"+window.stattutor_module+"/";
 		Tutor.data = Tutor.webcontent+window.name;
 		Tutor.problem_description = Tutor.name+".xml";
 		Tutor.brd = Tutor.name+".brd";
 		
-		if (window.ctatPreload)
+		if (window.hasOwnProperty('ctatPreload'))
 		{
 			ctatPreload();
 		}
 		else
 		{
 			console.log ("ctatPreload () not defined, only used in ctat stattutor");
+			initTutor (); // ctatPreload() calls initTutor.
 		}
-
-		initTutor ();
 
 		return;	
 	}	
 	
 	/*
-	*
+	* The target CTAT is synonymous with TutorShop. You can use this target outside of
+	* TutorShop if you use the same directory structure for the css, js and brd files
 	*/	
-	if ((CTATTarget=="Default") || (CTATTarget=="CTAT"))
+	if (CTATTarget=="CTAT")
 	{
-		initTutor ();
+		initTutor (CTATGlobalFunctions.decodeTutorShopParams());
 		
 		// Once all the CTAT code has been loaded allow developers to activate custom code
 		// All developers would have to do is provde the method called 'init'. This is a
@@ -431,6 +463,31 @@ function initOnload ()
 		
 		return;
 	}
+	
+	/*
+	* This target is available to you if you would like to either develop your own
+	* Learner Management System or would like to test and run your tutor standalone.
+	*/
+	if (CTATTarget=="Default")
+	{
+		initTutor (CTATGlobalFunctions.decodeTutorShopParams());
+		
+		// Once all the CTAT code has been loaded allow developers to activate custom code
+		// All developers would have to do is provde the method called 'init'. This is a
+		// better way of managing the order of execution since the ready function essentially
+		// overwrites the body onLoad function
+		
+		if (window.hasOwnProperty('ctatOnload'))
+		{
+			window ['ctatOnload']();
+		}
+		else
+		{
+			console.log ("Error: window.ctatOnload is not available");
+		}
+		
+		return;
+	}	
 }
 
 /**
@@ -476,7 +533,7 @@ $(document).ready(function()
 	if (CTATTarget=="CTAT")
 	{
 		console.log ("Checking target: " + CTATTarget);
-	
+
 		if (window ['XBlock'])
 		{
 			console.log ("Forcing target platform to be XBlock, loadCTAT () will be called by the EdX Xblock code ...");
@@ -486,7 +543,7 @@ $(document).ready(function()
 		}
 		else
 		{
-			console.log ("window ['XBlock'] is not XBlock: " + window ['XBlock']);
+			console.log ("window ['XBlock'] is not XBlock: " + window ['XBlock'] + "; CTATTarget is " + CTATTarget);
 		}
 	}
 
