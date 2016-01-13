@@ -86,14 +86,24 @@ class CTATXBlock(XBlock):
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
+    def studio_view(self, context=None):        
+        self.logdebug ("studio_view ()")
+        html = self.resource_string("static/html/ctatstudio.html")
+        frag = Fragment(html.format(self=self))
+        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))    
+        frag.initialize_js('CTATXBlock')        
+        return frag
+
+    # -------------------------------------------------------------------
+    # TO-DO: change this view to display your data your own way.
+    # -------------------------------------------------------------------
     def studio_view(self, context=None):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
         #frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
-        self.logdebug ("Initializing CTATXBlockStudio ...")
-        frag.initialize_js('CTATXBlockStudio')        
+        frag.initialize_js('CTATXBlock')        
         return frag
 
     @XBlock.json_handler
