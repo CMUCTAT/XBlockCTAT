@@ -106,6 +106,8 @@ function tutorShopParams(emptyResult) {
 		return emptyResult;
 };
 
+// Moved this code to loadCTAT, functionality should be the same
+/**
 if((tutorShopParams({}))["LMS"] == "TutorShop" || CTATTarget == "Default")
 {
     if(typeof CTATTutor == "undefined" || !CTATTutor)
@@ -117,6 +119,7 @@ if((tutorShopParams({}))["LMS"] == "TutorShop" || CTATTarget == "Default")
         loadjscssfile("Assets/CTAT.css","css");
     }
 }
+*/
 
 /**
 *
@@ -228,10 +231,11 @@ function loadCTAT ()
 		FlashVars ['user_guid']=window.self.studentId;
 		FlashVars ['baseUrl']=window.self.baseUrl;
 		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;
-		FlashVars ['question_file']=window.problem_location;//window.self.href + "/" + window.self.stattutor_module + "/" + window.self.problem;
+		//FlashVars ['question_file']=window.problem_location;//window.self.href + "/" + window.self.ctatmodule + "/" + window.self.problem;
+		FlashVars ['question_file']=window.self.href + "/" + window.self.ctatmodule + "/" + window.self.problem;
 		
 		FlashVars ['href']=window.href;
-		FlashVars ['module']=window.stattutor_module;		
+		FlashVars ['module']=window.ctatmodule;
 
 		FlashVars ['resource_spec']=window.name;
 		FlashVars ['problem']=window.problem;
@@ -257,7 +261,7 @@ function loadCTAT ()
 		
 		FlashVars ["session_id"]=("xblocksession_"+guid());
 		
-		ctatdebug ("Generated question_file: " + FlashVars ['question_file']);
+		console.log ("Generated question_file: " + FlashVars ['question_file']);
 		
 		initOnload ();
 		
@@ -278,10 +282,16 @@ function loadCTAT ()
 	* The target CTAT is synonymous with TutorShop. You can use this target outside of
 	* TutorShop if you use the same directory structure for the css, js and brd files
 	*/	
-	if (CTATTarget=="CTAT")
-	{	
-	    loadjscssfile ("Assets/CTAT.css","css");		
-	    loadjscssfile ("Assets/ctat.min.js","js");	
+	if((tutorShopParams({}))["LMS"] == "TutorShop" || CTATTarget == "CTAT")
+	{
+		if(typeof CTATTutor == "undefined" || !CTATTutor)
+		{
+			loadjscssfile("Assets/ctat.min.js","js");
+		}
+		if(!(Array.prototype.some.call(document.styleSheets, function(sheet) {return sheet.href && sheet.href.includes("CTAT.css")})))
+		{
+			loadjscssfile("Assets/CTAT.css","css");
+		}
 	}
 	
 	/**
@@ -421,7 +431,7 @@ function initOnload ()
 		flashVars.assignRawFlashVars(tempFlashVars);
 		
 		Tutor.name = window.name;
-		Tutor.webcontent = "problem_files/"+window.stattutor_module+"/";
+		Tutor.webcontent = "problem_files/"+window.ctatmodule+"/";
 		Tutor.data = Tutor.webcontent+window.name;
 		Tutor.problem_description = Tutor.name+".xml";
 		Tutor.brd = Tutor.name+".brd";
@@ -547,7 +557,14 @@ $(document).ready(function()
 		}
 	}
 
-	loadCTAT ();
+	if (CTATTarget!="XBlock")
+	{
+		loadCTAT ();
+	}
+	else	
+	{
+		console.log ("We can't execute loadCTAT () in $(document).ready(), because the actual XBlock needs to start first. It will call loadCTAT instead");
+	}
 });
 
 $(window).load(function() 
