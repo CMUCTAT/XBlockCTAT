@@ -90,7 +90,7 @@ class CTATXBlock(XBlock):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
-        frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
+        #frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
         self.logdebug ("Initializing CTATXBlockStudio ...")
         frag.initialize_js('CTATXBlockStudio')        
