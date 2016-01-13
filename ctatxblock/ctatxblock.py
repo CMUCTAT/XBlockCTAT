@@ -40,7 +40,7 @@ class CTATXBlock(XBlock):
     remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.settings)
     connection = String(help="", default="javascript", scope=Scope.settings)
 
-    src = String(help = "URL for MP3 file to play", scope = Scope.settings )
+    #src = String(help = "URL for MP3 file to play", scope = Scope.settings )
 
     saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
     skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
@@ -89,9 +89,10 @@ class CTATXBlock(XBlock):
     def studio_view(self, context=None):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
-        frag = Fragment(html.format(src=self.src))
+        frag = Fragment(html.format(self=self))
         frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
+        self.logdebug ("Initializing CTATXBlockStudio ...")
         frag.initialize_js('CTATXBlockStudio')        
         return frag
 
@@ -142,8 +143,8 @@ class CTATXBlock(XBlock):
                self.remoteurl = value
             elif (key=="connection"):
                self.connection = value
-            elif (key=="src"):
-               self.src = value
+            #elif (key=="src"):
+            #   self.src = value
             #elif (key=="saveandrestore"):
             #   self.saveandrestore = value
             #elif (key=="skillstring"):
