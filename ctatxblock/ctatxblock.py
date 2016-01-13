@@ -92,7 +92,7 @@ class CTATXBlock(XBlock):
         frag = Fragment(html.format(src=self.src))
 		frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))        
-        frag.initialize_js('CTATXBlock')        
+        frag.initialize_js('CTATXBlockStudio')        
         return frag
 
     @XBlock.json_handler
@@ -118,8 +118,6 @@ class CTATXBlock(XBlock):
                self.href = value
             elif (key=="module"):
                self.module = value
-            elif (key=="name"):
-               self.name = value
             elif (key=="problem"):
                self.problem = value
             elif (key=="dataset"):

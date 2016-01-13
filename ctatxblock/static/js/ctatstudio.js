@@ -36,15 +36,41 @@ function setVariable (aVariable,aContent)
 /**
  *
  */
-function CTATXBlock(runtime, element)
+function CTATXBlockStudio(runtime, element)
 {
-	console.log("CTATXBlock ("+runtime+","+element+") (STUDIO)");
+	console.log("CTATXBlockStudio ("+runtime+","+element+") (STUDIO)");
 
 	xblockRuntime=runtime;
 	xblockElement=element;
 	xblockpointer=this;
 
 	var pointer=this;
+	
+	applyValues ();
+	
+	$("#diskdir").prop( "disabled", true);
+	$("#port").prop( "disabled", true);
+	$("#remoteurl").prop( "disabled", true);
+
+	$("#drop").change(function () 
+	{
+        var logsetting = $('#drop option:selected').val();
+		
+		console.log ("Log setting chosen: " + logsetting);        
+		
+		if (logsetting=="javascript")
+		{
+			$("#diskdir").prop( "disabled", true);
+			$("#port").prop( "disabled", true);
+			$("#remoteurl").prop( "disabled",true);
+		}
+		else		
+		{
+			$("#diskdir").prop( "disabled", false);
+			$("#port").prop( "disabled", false);
+			$("#remoteurl").prop( "disabled", false);
+		}
+    });	
 	
 	$('#brd').on('input', function() 
 	{
