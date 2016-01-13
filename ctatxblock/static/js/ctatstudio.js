@@ -81,13 +81,13 @@ function CTATXBlockStudio(runtime, element)
 	{
 		console.log ("Setting brd to: " + $('#brd').text ());
 		
-		setVariable ("href",$('#brd').text ()));
+		setVariable ("href",$('#brd').text ());
 	});
 		
 	$('#ctatmodule').on('input', function() 
 	{
 		console.log ("Setting ctatmodule to: " + $('#ctatmodule').text ());
 		
-		setVariable ("ctatmodule",$('#ctatmodule').text ()));
+		setVariable ("ctatmodule",$('#ctatmodule').text ());
 	});	
 }

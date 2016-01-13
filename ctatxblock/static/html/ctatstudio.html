@@ -1,3 +1,4 @@
+
 <script language="javascript">
 
 /**
@@ -17,17 +18,17 @@ var connection ="{self.connection}";
 <td align="center" valign="middle">  
 
 	<table col=2 border="0" width="300" class="mainborder">
-		<tr><td colspan="2"><div class="highlightdiv"> <font face="arial"><b>Tutor Configuration</b></font></div></td></tr>						
+		<tr><td colspan="2"><div class="highlightdiv"> <font face="arial"><b>Tutor Configuration</b></font></div></td></tr>	
 		<tr><td>question_file: </td><td><input type="text" id="brd" name="brd" value="{self.href}" size="50" maxlength="150" title="path to .brd relative to this form (mode=runtime) or tservice (mode=authortimetutoring)"></td></tr>
 		<tr><td>module: </td><td><input type="text" id="ctatmodule" name="ctatmodule" value="{self.ctatmodule}" size="50" maxlength="150" title="The name of a project module, used to find project and module assets"></td></tr>
 		
-		<tr><td colspan="2"><div class="highlightdiv"> <font face="arial"><b>Configure DataShop Logging (if desired)</b></font></div></td></tr>						
+		<tr><td colspan="2"><div class="highlightdiv"> <font face="arial"><b>Configure DataShop Logging (if desired)</b></font></div></td></tr>
 
 		<tr><td>logging type:</td>
 			<td>
 			<select id="logtype" name="logtype">
 				<option selected>none
-				<option>clienttoservice			
+				<option>clienttoservice
 				<option>clienttologserver
 				<option>servicetologserver
 				<option>servicetodisk
@@ -60,18 +61,6 @@ var connection ="{self.connection}";
 			</td>
 		</tr>
 	</table>
-
-	<!--
-	<br>
-
-	<table col="2" border="0" width="300" class="mainborder">
-		<tr><td colspan="2"><div class="highlightdiv"> <font face="arial"><b>other</b></font></div></td></tr>
-		<tr><td><input type="text" name="var1" value="xxx_xxx" size="15" maxlength="30" title="a flashvar variable"> </td><td> <input type="text" name="val1" value="xxx" size="50" maxlength="150" title="a flashvar value"></td></tr>
-		<tr><td><input type="text" name="var2" value="xxx_xxx" size="15" maxlength="30" title="a flashvar variable"> </td><td> <input type="text" name="val2" value="xxx" size="50" maxlength="150" title="a flashvar value"></td></tr>
-		<tr><td><input type="text" name="var3" value="xxx_xxx" size="15" maxlength="30" title="a flashvar variable"> </td><td> <input type="text" name="val3" value="xxx" size="50" maxlength="150" title="a flashvar value"></td></tr>
-		<tr><td><input type="text" name="var4" value="xxx_xxx" size="15" maxlength="30" title="a flashvar variable"> </td><td> <input type="text" name="val4" value="xxx" size="50" maxlength="150" title="a flashvar value"></td></tr>
-	</table>
-	-->
 	
 </td>
 </tr>
