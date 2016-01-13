@@ -3,6 +3,11 @@ var xblockRuntime=null;
 var xblockElement=null;
 var xblockpointer=null;
 
+function applyValues ()
+{
+    console.log ("applyValues ()");
+}
+
 /**
  *
  */
