@@ -18,8 +18,6 @@ function applyValues ()
 function setVariable (aVariable,aContent)
 {
 	console.log ("setVariable ("+aVariable+","+aContent+")");
-	
-	return;
 
 	var encoded=window.btoa (aContent);
 
