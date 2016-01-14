@@ -19,13 +19,7 @@ function setVariable (aVariable,aContent)
 {
 	console.log ("setVariable ("+aVariable+","+aContent+")");
 
-	var encoded=window.btoa (aContent);
-
-	//console.log ("Encoded: " + encoded);
-
-	console.log ("Constructed xblock handler url: " + xblockRuntime.handlerUrl(xblockElement,"ctat_set_variable"), JSON.stringify({aVariable:encoded}));
-
-	var jsonString="{\""+ aVariable + "\": \"" + encoded + "\"}";
+	var jsonString="{\""+ aVariable + "\": \"" + aContent + "\"}";
 	
 	$.ajax({
 		type: "POST",
