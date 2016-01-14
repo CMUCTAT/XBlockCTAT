@@ -18,6 +18,8 @@ function applyValues ()
 function setVariable (aVariable,aContent)
 {
 	console.log ("setVariable ("+aVariable+","+aContent+")");
+	
+	return;
 
 	var encoded=window.btoa (aContent);
 
@@ -25,10 +27,12 @@ function setVariable (aVariable,aContent)
 
 	console.log ("Constructed xblock handler url: " + xblockRuntime.handlerUrl(xblockElement,"ctat_set_variable"), JSON.stringify({aVariable:encoded}));
 
+	var jsonString="{\""+ aVariable + "\": \"" + encoded + "\"}";
+	
 	$.ajax({
 		type: "POST",
 		url: xblockRuntime.handlerUrl(xblockElement, "ctat_set_variable"),
-		"{\""+ aVariable + "\": \"" + encoded + "\"}",
+		data: jsonString,
 		//data: JSON.stringify({aVariable:encoded}), 
 		success: function(result)
 		{
@@ -63,7 +67,7 @@ function CTATXBlockStudio(runtime, element)
 
 	$("#logtype").change(function () 
 	{
-        var logsetting = $('#drop option:selected').val();
+        var logsetting = $('#logtype option:selected').val();
 		
 		console.log ("Log setting chosen: " + logsetting);
 		
