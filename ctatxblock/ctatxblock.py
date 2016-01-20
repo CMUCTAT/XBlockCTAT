@@ -14,7 +14,7 @@ import socket
 from string import Template
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String
+from xblock.fields import Scope, Integer, String, Float, Boolean
 from xblock.fragment import Fragment
 
 dbgopen=False;
@@ -56,6 +56,12 @@ class CTATXBlock(XBlock):
               "option point values."),
         values={"min": 0, "step": .1},
         scope=Scope.settings
+    )
+
+    done = Boolean(
+        scope=Scope.user_state,
+        help="Is the student done?",
+        default=False
     )
 
     def logdebug (self, aMessage):
@@ -128,7 +134,7 @@ class CTATXBlock(XBlock):
         grade_event = {'value': 0.5, 'max_value': 1}
         self.runtime.publish(self, "grade", grade_event)
         #self.runtime.publish(self, "edx.done.toggled", {'done': self.done})
-        return {'result': 'success'}
+        return {'state': self.done}
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
