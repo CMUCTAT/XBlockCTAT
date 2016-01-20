@@ -7,7 +7,11 @@ import os
 import pprint
 import pkg_resources
 import base64
+import glob
+import re
 import socket
+
+from string import Template
 
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer, String
