@@ -150,7 +150,8 @@ class CTATXBlock(XBlock):
             #elif (key=="src"):
             #   self.src = value
             elif (key=="saveandrestore"):
-               self.saveandrestore = value
+               self.logdebug ("Received saveandrestore request")
+            #   self.saveandrestore = value
             #elif (key=="skillstring"):
             #  self.skillstring = value
 
