@@ -63,6 +63,10 @@ class CTATXBlock(XBlock):
         self.logdebug (self,'local_resource_url (adjusted): ' + base)
         return (text.replace ("[xblockbase]",base))
 
+    def strip_local (self, url):
+        """Returns the given url with //localhost:port removed."""
+        return re.sub('//localhost(:\d*)?', '', url)
+
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
@@ -70,15 +74,15 @@ class CTATXBlock(XBlock):
     def student_view(self, context=None):
         self.logdebug ("student_view ()")
         self.logdebug ("Hostname: " + socket.getfqdn())
-        self.logdebug ("Base URL: " + self.runtime.local_resource_url(self, 'public/'))
-        baseURL=self.runtime.local_resource_url (self,"public/problem_files/ref.css");
+        self.logdebug ("Base URL: " + self.strip_local(self.runtime.local_resource_url(self, 'public/')))
+        baseURL=self.strip_local(self.runtime.local_resource_url (self,"public/problem_files/ref.css"))
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment(html.format(self=self))
-        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctat.css"))
-        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatxblock.css"))
+        frag.add_css_url(self.strip_local((self.runtime.local_resource_url (self,"public/css/ctat.css")))
+        frag.add_css_url(self.strip_local((self.runtime.local_resource_url (self,"public/css/ctatxblock.css")))
         frag.add_javascript ("var baseURL=\""+(baseURL [:-7])+"\";")
-        frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctat.min.js"))
-        frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctatloader.js"))
+        frag.add_javascript_url(self.strip_local((self.runtime.local_resource_url (self,"public/js/ctat.min.js")))
+        frag.add_javascript_url(self.strip_local((self.runtime.local_resource_url (self,"public/js/ctatloader.js")))
         frag.add_content (self.resource_string("static/html/body.html"));
         frag.initialize_js('CTATXBlock')
         return frag
@@ -90,8 +94,8 @@ class CTATXBlock(XBlock):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
-        frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctatstudio.js"))
-        frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))
+        frag.add_javascript_url(self.strip_local(self.runtime.local_resource_url (self,"public/js/ctatstudio.js")))
+        frag.add_css_url(self.strip_local(self.runtime.local_resource_url (self,"public/css/ctatstudio.css")))
         frag.initialize_js('CTATXBlockStudio')        
         return frag
 
