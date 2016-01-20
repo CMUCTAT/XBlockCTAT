@@ -64,7 +64,7 @@ class CTATXBlock(XBlock):
         return (text.replace ("[xblockbase]",base))
 
     def strip_local (self, url):
-        """Returns the given url with //localhost:port removed."""
+        # Returns the given url with //localhost:port removed.
         return re.sub('//localhost(:\d*)?', '', url)
 
     # -------------------------------------------------------------------
