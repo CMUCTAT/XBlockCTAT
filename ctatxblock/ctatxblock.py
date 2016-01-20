@@ -108,9 +108,10 @@ class CTATXBlock(XBlock):
         self.logdebug ("ctat_grade ()")
         self.attempted = True
         self.score = data['value']
-        self.max_score = data['max_value']
-        self.completed = self.score >= self.max_score
-        event_data = {'value': self.score, 'max_value': self.max_score}
+        #self.max_score = data['max_value']
+        #self.completed = self.score >= self.max_score
+        #event_data = {'value': self.score, 'max_value': self.max_score}
+        event_data = {'value': self.score, 'max_value': 1.0}
         self.runtime.publish(self, 'grade', event_data);
         return {'result': 'success'}
 
