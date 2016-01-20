@@ -22,6 +22,8 @@ tmp_file=None;
 # -------------------------------------------------------------------
 class CTATXBlock(XBlock):
 
+    has_score = True;
+
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
     href = String(help="URL to a BRD file", default="http://augustus.pslc.cs.cmu.edu/html5/", scope=Scope.settings)
@@ -39,8 +41,6 @@ class CTATXBlock(XBlock):
     port = String(help="Port used by the tutoring service", default="8080", scope=Scope.settings)
     remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.settings)
     connection = String(help="", default="javascript", scope=Scope.settings)
-
-    #src = String(help = "URL for MP3 file to play", scope = Scope.settings )
 
     saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
     skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
@@ -90,26 +90,30 @@ class CTATXBlock(XBlock):
         self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
-        #frag.add_javascript (self.resource_string("static/js/ctatstudio.js"))
         frag.add_javascript_url(self.runtime.local_resource_url (self,"public/js/ctatstudio.js"))
         frag.add_css_url(self.runtime.local_resource_url (self,"public/css/ctatstudio.css"))
         frag.initialize_js('CTATXBlockStudio')        
         return frag
 
     @XBlock.json_handler
+    def ctat_grade(self, data, suffix=''):
+        self.logdebug ("ctat_grade ()")
+        self.attempted = True
+        self.score = data['value']
+        self.max_score = data['max_value']
+        self.completed = self.score >= self.max_score
+        event_data = {'value': self.score, 'max_value': self.max_score}
+        self.runtime.publish(self, 'grade', event_data);
+        return {'result': 'success'}
+
+    @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
         self.logdebug ('studio_submit()')
-        #pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(data)
-        #self.src = data.get('src')
         return {'result': 'success'}
 
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
         self.logdebug ("ctat_set_variable ()")
-        ### causes 500: INTERNAL SERVER ERROR ###
-        #pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(data)
 
         for key in data:
             #value = base64.b64decode(data[key])
@@ -145,8 +149,8 @@ class CTATXBlock(XBlock):
                self.connection = value
             #elif (key=="src"):
             #   self.src = value
-            #elif (key=="saveandrestore"):
-            #   self.saveandrestore = value
+            elif (key=="saveandrestore"):
+               self.saveandrestore = value
             #elif (key=="skillstring"):
             #  self.skillstring = value
 
