@@ -49,6 +49,15 @@ class CTATXBlock(XBlock):
     saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
     skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
 
+    weight = Float(
+        display_name="Problem Weight",
+        help=("Defines the number of points each problem is worth. "
+              "If the value is not set, the problem is worth the sum of the "
+              "option point values."),
+        values={"min": 0, "step": .1},
+        scope=Scope.settings
+    )
+
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
         if (dbgopen==False):
