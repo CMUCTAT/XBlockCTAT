@@ -48,7 +48,7 @@ class CTATXBlock(XBlock):
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
         if (dbgopen==False):
-            tmp_file = open("/tmp/edx-tmp-log-ctat.txt", "w", 0)
+            tmp_file = open("/tmp/edx-tmp-log-ctat.txt", "a", 0)
             dbgopen=True
         tmp_file.write (aMessage + "\n")
 
