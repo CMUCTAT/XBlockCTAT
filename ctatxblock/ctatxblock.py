@@ -113,8 +113,10 @@ class CTATXBlock(XBlock):
         #event_data = {'value': self.score, 'max_value': self.max_score}
         #event_data = {value : self.score, max_value : 1.0}
         self.runtime.publish(self, "grade", 
-                            { value: 0.5
-                              max_value: 1.0 })
+                            { 
+                              'value' : 0.5
+                              'max_value' : 1.0
+                            })
         return {'result': 'success'}
 
     @XBlock.json_handler
