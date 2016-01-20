@@ -103,6 +103,10 @@ class CTATXBlock(XBlock):
         frag.initialize_js('CTATXBlockStudio')        
         return frag
 
+    # --------------------------------------------------------------------
+    # More on grade handling:
+    # https://github.com/pmitros/DoneXBlock/blob/master/done/done.py
+    # --------------------------------------------------------------------
     @XBlock.json_handler
     def ctat_grade(self, data, suffix=''):
         self.logdebug ("ctat_grade ()")
@@ -112,11 +116,9 @@ class CTATXBlock(XBlock):
         #self.completed = self.score >= self.max_score
         #event_data = {'value': self.score, 'max_value': self.max_score}
         #event_data = {value : self.score, max_value : 1.0}
-        self.runtime.publish(self, "grade", 
-                            { 
-                              'value' : 0.5,
-                              'max_value' : 1.0
-                            })
+        grade_event = {'value': 0.5, 'max_value': 1}
+        self.runtime.publish(self, "grade", grade_event)
+        #self.runtime.publish(self, "edx.done.toggled", {'done': self.done})
         return {'result': 'success'}
 
     @XBlock.json_handler
@@ -183,3 +185,7 @@ class CTATXBlock(XBlock):
                 </vertical_demo>
              """),
         ]
+
+    def max_score(self):
+        # The maximum raw score of our problem.
+        return 1
