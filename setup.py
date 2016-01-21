@@ -26,7 +26,7 @@ def package_data(pkg, roots):
 
 setup(
     name='ctatxblock-xblock',
-    version='0.57',
+    version='0.58',
     description='CTAT XBlock Template',
     packages=[
         'ctatxblock',
