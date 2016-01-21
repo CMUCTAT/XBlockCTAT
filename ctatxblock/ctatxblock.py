@@ -181,7 +181,7 @@ class CTATXBlock(XBlock):
             #   self.src = value
             elif (key=="saveandrestore"):
                self.logdebug ("Received saveandrestore request")
-            #   self.saveandrestore = value
+               self.saveandrestore = value
             #elif (key=="skillstring"):
             #  self.skillstring = value
 
