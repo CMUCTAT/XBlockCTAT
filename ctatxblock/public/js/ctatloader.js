@@ -255,7 +255,7 @@ function loadCTAT ()
 
 		FlashVars ['saveandrestore']=window.saveandrestore;
 		FlashVars ['skillstring']=window.skillstring;
-		FlashVars ['problem_state_status']='retrieve';
+		FlashVars ['problem_state_status']='incomplete';
 		FlashVars ['restore_problem_url']='getVariable()';
 
 		ctatdebug ("XBlock windows.self.studentId: " + window.self.studentId);
