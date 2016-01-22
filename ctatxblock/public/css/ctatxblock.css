@@ -102,7 +102,7 @@ canvas
 
 /* Override edx's button styles so that CTAT's button interaction and coloring
 works as intended */
-div[data-block-type=stattutor] button {
+div[data-block-type=ctatxblock] button {
     display: inline-block;
     line-height: normal;
     margin-right: .1em;
@@ -116,20 +116,20 @@ div[data-block-type=stattutor] button {
     padding: 0 6px 0 6px;
     text-shadow: initial;
 }
-div[data-block-type=stattutor] button[focus] {
+div[data-block-type=ctatxblock] button[focus] {
     background-image: initial;
 }
-div[data-block-type=stattutor] button[disabled] {
+div[data-block-type=ctatxblock] button[disabled] {
     background-image: initial;
 }
-div[data-block-type=stattutor] button:hover {
+div[data-block-type=ctatxblock] button:hover {
     background-image: initial;
 }
-div[data-block-type=stattutor] button:hover.CTAT-hint-button--hover {
+div[data-block-type=ctatxblock] button:hover.CTAT-hint-button--hover {
     background-image: initial;
     background-color: #E6C200;
 }
-div[data-block-type=stattutor] button:focus {
+div[data-block-type=ctatxblock] button:focus {
     background-image: initial;
     box-shadow: none;
 }
