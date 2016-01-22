@@ -224,6 +224,8 @@ function loadCTAT ()
 	*/		 
 	if (CTATTarget=="XBlock")
 	{	
+		useDebugging=true;
+		
 		console.log ("XBlock base url: " + baseURL );
 		
 		FlashVars ['DeliverUsingOLI']='true';

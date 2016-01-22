@@ -31,7 +31,7 @@ class CTATXBlock(XBlock):
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
     href = String(help="URL to a BRD file", default="", scope=Scope.settings)
-    ctatmodule = String(help="The learning module to load from", default="problem_files", scope=Scope.settings)
+    ctatmodule = String(help="The learning module to load from", default="", scope=Scope.settings)
     name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)
     problem = String(help="The name of a BRD file", default="1416-formula.brd", scope=Scope.settings)
     dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.settings)
