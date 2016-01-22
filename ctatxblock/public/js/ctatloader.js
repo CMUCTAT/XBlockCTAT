@@ -230,12 +230,10 @@ function loadCTAT ()
 		FlashVars ['tutoring_service_communication']='javascript';
 		FlashVars ['user_guid']=window.self.studentId;
 		FlashVars ['baseUrl']=window.self.baseUrl;
-		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;
-		//FlashVars ['question_file']=window.problem_location;//window.self.href + "/" + window.self.ctatmodule + "/" + window.self.problem;
-		FlashVars ['question_file']=window.self.href + "/" + window.self.ctatmodule + "/" + window.self.problem;
-		
+		FlashVars ['handlerBaseUrl']=window.self.handlerBaseUrl;		
 		FlashVars ['href']=window.href;
 		FlashVars ['module']=window.ctatmodule;
+		FlashVars ['question_file']=translateResourceFile (window.self.href + "/" + window.self.ctatmodule + "/" + window.self.problem);		
 
 		FlashVars ['resource_spec']=window.name;
 		FlashVars ['problem']=window.problem;
