@@ -33,7 +33,7 @@ class CTATXBlock(XBlock):
     href = String(help="URL to a BRD file", default="http://augustus.pslc.cs.cmu.edu/html5/", scope=Scope.settings)
     ctatmodule = String(help="The learning module to load from", default="HTML5TestFiles", scope=Scope.settings)
     name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)
-    problem = String(help="The name of a BRD file", default="1416-worked.brd", scope=Scope.settings)
+    problem = String(help="The name of a BRD file", default="1416-formula.brd", scope=Scope.settings)
     dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.settings)
     level1 = String(help="Level name to log", default="unit1", scope=Scope.settings)
     type1 = String(help="Level type to log", default="unit", scope=Scope.settings)
