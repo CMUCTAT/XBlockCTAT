@@ -32,9 +32,9 @@ class CTATXBlock(XBlock):
 
     ### xBlock tag variables
     width = Integer(help="Width of the StatTutor frame.",
-                    default=900, scope=Scope.content)
+                    default=550, scope=Scope.content)
     height = Integer(help="Height of the StatTutor frame.",
-                     default=750, scope=Scope.content)
+                     default=400, scope=Scope.content)
 
     ### Grading variables
     has_score = Boolean(default=True, scope=Scope.content)
@@ -65,7 +65,7 @@ class CTATXBlock(XBlock):
     src = String(help="The source html file for CTAT interface.",
                  default="public/html/FractionAddition.html", scope=Scope.settings)
     brd = String(help="The behavior graph.",
-                 default="public/problem_files/1416-html5.brd",
+                 default="public/problem_files/1416.brd",
                  scope=Scope.settings)
 
     ### CTATConfiguration variables
