@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     height="78" width="200" viewBox="0 0 200 78" preserveAspectRatio="none"
+     font-size="50px" font-family="sans-serif">
+   <desc>CTAT Logo</desc>
+   <defs>
+    <link xmlns="http://www.w3.org/1999/xhtml" href='http://fonts.googleapis.com/css?family=Josefin+Sans:400,700' rel='stylesheet' type='text/css' />
+    <style type="text/css">
+      text { text-anchor: middle; font: 50px 'Josefin Sans',sans-serif; stroke: white; fill: white; }
+      .tutor { font-weight: 700; stroke: orange; fill: orange; }
+    </style>
+   </defs>
+   <rect width="100%" height="100%" stroke="none" fill="white"/>
+   <g fill="#122761">
+   	<svg x="0" y="15" width="48.5" height="48.5">
+   		<rect width="100%" height="100%"/>
+   		<text x="50%" y="100%">C</text>
+   	</svg>
+   	<svg x="50.5" y="3" width="48.5" height="48.5">
+   		<rect width="100%" height="100%"/>
+   		<text class="tutor" x="50%" y=".74em">T</text>
+   	</svg>
+   	<svg x="101" y="15" width="48.5" height="48.5">
+   		<rect width="100%" height="100%"/>
+   		<text x="50%" y="100%">A</text>
+   	</svg>
+   	<svg x="151.5" y="15" width="48.5" height="48.5">
+   		<rect width="100%" height="100%"/>
+   		<text x="50%" y="100%">T</text>
+   	</svg>
+   </g>
+</svg>

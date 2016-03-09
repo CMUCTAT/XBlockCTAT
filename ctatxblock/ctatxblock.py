@@ -10,11 +10,12 @@ import base64
 import glob
 import re
 import socket
+import uuid
 
 from string import Template
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String, Float, Boolean
+from xblock.fields import Scope, Integer, String, Float, Boolean, Any
 from xblock.fragment import Fragment
 
 dbgopen=False;
@@ -25,30 +26,32 @@ tmp_file=None;
 #
 # -------------------------------------------------------------------
 class CTATXBlock(XBlock):
+    """
+    A XBlock providing CTAT tutors.
+    """
 
-    has_score = True;
+    ### xBlock tag variables
+    width = Integer(help="Width of the StatTutor frame.",
+                    default=900, scope=Scope.content)
+    height = Integer(help="Height of the StatTutor frame.",
+                     default=750, scope=Scope.content)
 
-    # Fields are defined on the class.  You can access them in your code as
-    # self.<fieldname>.
-    href = String(help="URL to a BRD file", default="", scope=Scope.settings)
-    ctatmodule = String(help="The learning module to load from", default="", scope=Scope.settings)
-    name = String(help="Problem name to log", default="CTATEdXProblem", scope=Scope.settings)
-    problem = String(help="The name of a BRD file", default="1416-formula.brd", scope=Scope.settings)
-    dataset = String(help="Dataset name to log", default="edxdataset", scope=Scope.settings)
-    level1 = String(help="Level name to log", default="unit1", scope=Scope.settings)
-    type1 = String(help="Level type to log", default="unit", scope=Scope.settings)
-    level2 = String(help="Level name to log", default="unit2", scope=Scope.settings)
-    type2 = String(help="Level type to log", default="unit", scope=Scope.settings)
-    logurl = String(help="URL of the logging service", default="http://pslc-qa.andrew.cmu.edu/log/server", scope=Scope.settings)
-    logtype = String(help="How should data be logged", default="clienttologserver", scope=Scope.settings)
-    diskdir = String(help="Directory for log files relative to the tutoring service", default=".", scope=Scope.settings)
-    port = String(help="Port used by the tutoring service", default="8080", scope=Scope.settings)
-    remoteurl = String(help="Location of the tutoring service (localhost or domain name)", default="localhost", scope=Scope.settings)
-    connection = String(help="", default="javascript", scope=Scope.settings)
-
-    saveandrestore = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
-    skillstring = String(help="Internal data blob used by the tracer", default="", scope=Scope.user_state)
-
+    ### Grading variables
+    has_score = Boolean(default=True, scope=Scope.content)
+    icon_class = String(default="problem", scope=Scope.content)
+    score = Integer(help="Current count of correctly completed student steps",
+                    scope=Scope.user_state, default=0)
+    max_problem_steps = Integer(
+        help="Total number of steps",
+        scope=Scope.user_state, default=1)
+    def max_score(self):
+        """ The maximum raw score of the problem. """
+        return 1 #self.max_problem_steps
+    attempted = Boolean(help="True if at least one step has been completed",
+                        scope=Scope.user_state, default=False)
+    completed = Boolean(
+        help="True if all of the required steps are correctly completed",
+        scope=Scope.user_state, default=False)
     weight = Float(
         display_name="Problem Weight",
         help=("Defines the number of points each problem is worth. "
@@ -56,13 +59,52 @@ class CTATXBlock(XBlock):
               "option point values."),
         values={"min": 0, "step": .1},
         scope=Scope.settings
-    )
+    ) # weight needs to be set to something
 
-    done = Boolean(
-        scope=Scope.user_state,
-        help="Is the student done?",
-        default=False
-    )
+    ### Basic interface variables
+    src = String(help="The source html file for CTAT interface.",
+                 default="public/html/StatTutor.html", scope=Scope.settings)
+    brd = String(help="The behavior graph.",
+                 default="public/problem_files/m1_survey/survey.brd",
+                 scope=Scope.settings)
+
+    ### CTATConfiguration variables
+    log_name = String(help="Problem name to log", default="CTATEdXProblem",
+                      scope=Scope.settings)
+    log_dataset = String(help="Dataset name to log", default="edxdataset",
+                         scope=Scope.settings)
+    log_level1 = String(help="Level name to log", default="unit1",
+                        scope=Scope.settings)
+    log_type1 = String(help="Level type to log", default="unit",
+                       scope=Scope.settings)
+    log_level2 = String(help="Level name to log", default="unit2",
+                        scope=Scope.settings)
+    log_type2 = String(help="Level type to log", default="unit",
+                       scope=Scope.settings)
+    log_url = String(help="URL of the logging service",
+                     default="http://pslc-qa.andrew.cmu.edu/log/server",
+                     scope=Scope.settings)
+    logtype = String(help="How should data be logged",
+                     default="clienttologserver", scope=Scope.settings)
+    log_diskdir = String(
+        help="Directory for log files relative to the tutoring service",
+        default=".", scope=Scope.settings)
+    log_port = String(help="Port used by the tutoring service", default="8080",
+                      scope=Scope.settings)
+    log_remoteurl = String(
+        help="Location of the tutoring service (localhost or domain name)",
+        default="localhost", scope=Scope.settings)
+
+    ctat_connection = String(help="", default="javascript",
+                             scope=Scope.settings)
+
+    ### user information
+    saveandrestore = String(help="Internal data blob used by the tracer",
+                            default="", scope=Scope.user_state)
+    skillstring = String(help="Internal data blob used by the tracer",
+                         default="", scope=Scope.user_info)
+    ctat_user_id = String(help="Anonymous ID used for logging in DataShop.",
+                          default="", scope=Scope.user_info) # unclear how to get EdX's anonymous id, so use our own.
 
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
@@ -72,74 +114,87 @@ class CTATXBlock(XBlock):
         tmp_file.write (aMessage + "\n")
 
     def resource_string(self, path):
-        data = pkg_resources.resource_string(__name__, path)        
+        """ Read in the contents of a resource file. """
+        data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def bind_path (self, text):
-        tbase=self.runtime.local_resource_url (self,"public/ref.css")
-        self.logdebug (self,'local_resource_url: ' + tbase)
-        base=tbase[:-7]
-        self.logdebug (self,'local_resource_url (adjusted): ' + base)
-        return (text.replace ("[xblockbase]",base))
-
     def strip_local (self, url):
-        # Returns the given url with //localhost:port removed.
+        """ Returns the given url with //localhost:port removed. """
         return re.sub('//localhost(:\d*)?', '', url)
+
+    def get_local_resource_url (self, url):
+        """ Wrapper for self.runtime.local_resource_url. """
+        return self.strip_local(self.runtime.local_resource_url(self, url))
 
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
 
     def student_view(self, context=None):
-        self.logdebug ("student_view ()")
-        self.logdebug ("Hostname: " + socket.getfqdn())
-        self.logdebug ("Base URL: " + self.strip_local(self.runtime.local_resource_url(self, 'public/')))
-        baseURL=self.strip_local(self.runtime.local_resource_url (self,"public/problem_files/ref.css"));
+        """
+        Create a Fragment used to display a CTAT StatTutor xBlock to a student.
+
+        Returns a Fragment object containing the HTML to display
+        """
+        #xblock_user = self.runtime.service(self,"user").get_current_user()
+        #self.ctat_user_id=xblock_user.opt_attrs['edx-platform.user_id']
+        if self.ctat_user_id=="":
+            self.ctat_user_id = str(uuid.uuid4())
+
+        # read in template html
         html = self.resource_string("static/html/ctatxblock.html")
-        frag = Fragment(html.format(self=self))
-        frag.add_css_url(self.strip_local((self.runtime.local_resource_url (self,"public/css/ctat.css"))))
-        frag.add_css_url(self.strip_local((self.runtime.local_resource_url (self,"public/css/ctatxblock.css"))))
-        frag.add_javascript ("var baseURL=\""+(baseURL [:-7])+"\";")
-        frag.add_javascript_url(self.strip_local((self.runtime.local_resource_url (self,"public/js/ctat.min.js"))))
-        frag.add_javascript_url(self.strip_local((self.runtime.local_resource_url (self,"public/js/ctatloader.js"))))
-        frag.add_content (self.resource_string("static/html/body.html"));
-        frag.initialize_js('CTATXBlock')
+        frag = Fragment (html.format(
+            self=self,
+            tutor_html=self.get_local_resource_url(self.src),
+            question_file=self.get_local_resource_url(self.brd),
+            student_id=self.ctat_user_id,
+            guid=str(uuid.uuid4())))
+        frag.add_javascript (self.resource_string("static/js/CTATXBlock.js"))
+        frag.initialize_js('Initialize_CTATXBlock')
         return frag
+
+    @XBlock.json_handler
+    def ctat_grade(self, data, suffix=''):
+        self.logdebug ("ctat_grade ()")
+        #print('ctat_grade:',data,suffix)
+        self.attempted = True
+        self.score = data['value']
+        self.max_problem_steps = data['max_value']
+        self.completed = self.score >= self.max_problem_steps
+        scaled = self.score/self.max_problem_steps
+        # trying with max of 1.
+        event_data = {'value': scaled, 'max_value': 1}
+        self.runtime.publish(self, 'grade', event_data)
+        return {'result': 'success', 'state': self.completed}
 
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
     # -------------------------------------------------------------------
     def studio_view(self, context=None):
-        self.logdebug ("studio_view ()")
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
-        frag.add_javascript_url(self.strip_local(self.runtime.local_resource_url (self,"public/js/ctatstudio.js")))
-        frag.add_css_url(self.strip_local(self.runtime.local_resource_url (self,"public/css/ctatstudio.css")))
-        frag.initialize_js('CTATXBlockStudio')        
+        js = self.resource_string("static/js/ctatstudio.js")
+        frag.add_javascript(unicode(js))
+        frag.initialize_js('CTATXBlockStudio')
         return frag
-
-    # --------------------------------------------------------------------
-    # More on grade handling:
-    # https://github.com/pmitros/DoneXBlock/blob/master/done/done.py
-    # --------------------------------------------------------------------
-    @XBlock.json_handler
-    def ctat_grade(self, data, suffix=''):
-        self.logdebug ("ctat_grade ()")
-        self.attempted = True
-        self.score = data['value']
-        #self.max_score = data['max_value']
-        #self.completed = self.score >= self.max_score
-        #event_data = {'value': self.score, 'max_value': self.max_score}
-        #event_data = {value : self.score, max_value : 1.0}
-        grade_event = {'value': 0.5, 'max_value': 1}
-        self.runtime.publish(self, "grade", grade_event)
-        #self.runtime.publish(self, "edx.done.toggled", {'done': self.done})
-        return {'state': self.done}
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
-        self.logdebug ('studio_submit()')
+        """
+        Called when submitting the form in Studio.
+        """
+        self.src = data.get('src')
+        self.brd = data.get('brd')
+        self.width = data.get('width')
+        self.height = data.get('height')
         return {'result': 'success'}
+
+    @XBlock.json_handler
+    def ctat_save_state(self, data, suffix=''):
+        if "saveandrestore" in data:
+            self.saveandrestore = data["saveandrestore"]
+            return {'result': 'success'}
+        return {'result': 'error'}
 
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
@@ -196,11 +251,7 @@ class CTATXBlock(XBlock):
         return [
             ("CTATXBlock",
              """<vertical_demo>
-                <ctatxblock/>
+                <ctatxblock width="" height=""/>
                 </vertical_demo>
              """),
         ]
-
-    def max_score(self):
-        # The maximum raw score of our problem.
-        return 1
