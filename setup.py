@@ -3,10 +3,7 @@
 import os
 from setuptools import setup
 
-print('setup ()')
-
 def package_data(pkg, roots):
-    print('package_data()')
     """Generic function to find package_data.
 
     All of the files under each of the `roots` will be declared as package
@@ -18,7 +15,6 @@ def package_data(pkg, roots):
         for dirname, _, files in os.walk(os.path.join(pkg, root)):
             for fname in files:
                 totalPath = os.path.relpath(os.path.join(dirname, fname), pkg)
-                # print 'File: %s ' % totalPath
                 data.append(totalPath)
 
     return {pkg: data}
@@ -27,7 +23,7 @@ def package_data(pkg, roots):
 setup(
     name='ctatxblock-xblock',
     version='0.88',
-    description='CTAT XBlock Template',
+    description='CTAT XBlock',
     packages=[
         'ctatxblock',
     ],
@@ -41,5 +37,3 @@ setup(
     },
     package_data=package_data("ctatxblock", ["static", "public"]),
 )
-
-print('setup () done')

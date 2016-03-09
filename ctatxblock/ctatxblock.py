@@ -63,9 +63,9 @@ class CTATXBlock(XBlock):
 
     ### Basic interface variables
     src = String(help="The source html file for CTAT interface.",
-                 default="public/html/StatTutor.html", scope=Scope.settings)
+                 default="public/html/FractionAddition.html", scope=Scope.settings)
     brd = String(help="The behavior graph.",
-                 default="public/problem_files/m1_survey/survey.brd",
+                 default="public/problem_files/1416-worked.brd",
                  scope=Scope.settings)
 
     ### CTATConfiguration variables
