@@ -32,9 +32,9 @@ class CTATXBlock(XBlock):
 
     ### xBlock tag variables
     width = Integer(help="Width of the StatTutor frame.",
-                    default=550, scope=Scope.content)
+                    default=690, scope=Scope.content)
     height = Integer(help="Height of the StatTutor frame.",
-                     default=400, scope=Scope.content)
+                     default=550, scope=Scope.content)
 
     ### Grading variables
     has_score = Boolean(default=True, scope=Scope.content)
