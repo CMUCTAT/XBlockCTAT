@@ -5,7 +5,7 @@ CTATXBlock.make = function (runtime, element) {
 	set_variable: function(variable_name,value) {
 	    console.log('CTATXBlock.js set_variable');
 	    var data = {};
-	    data[variable_name] = window.btoa(value);
+	    data[variable_name] = value;
 	    $.post(runtime.handlerUrl(element, 'ctat_set_variable'),
 		   JSON.stringify(data)).success(function () {
 		       console.log('ctat_set_variable succeeded');
