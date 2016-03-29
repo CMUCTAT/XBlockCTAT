@@ -158,7 +158,7 @@ class CTATXBlock(XBlock):
 
     @XBlock.json_handler
     def ctat_grade(self, data, suffix=''):
-        self.logdebug ("ctat_grade ()")
+        #self.logdebug ("ctat_grade ()")
         #print('ctat_grade:',data,suffix)
         self.attempted = True
         self.score = data['value']

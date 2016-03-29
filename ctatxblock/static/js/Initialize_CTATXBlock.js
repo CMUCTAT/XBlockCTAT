@@ -42,7 +42,9 @@ function Initialize_CTATXBlock(runtime,element) {
 	lms.getProblemState = function (handler) {
 	    return handler(window.atob(CTATConfig['saveandrestore']));
 	};
-	lms.gradeStudent = post.report_grade;
+	lms.gradeStudent = function (correct_step_count, total_step_count) {
+	    post.report_grade(correct_step_count, total_step_count);
+	};
 	// CTATConfig is from CTATConfig.js which is a template that is filled
 	// out by ctatxblock.py
 	this.contentWindow.initTutor(CTATConfig);
