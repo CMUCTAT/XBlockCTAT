@@ -12,7 +12,7 @@
 /** set the environment */
 var CTATXConfig = window.parent.CTATConfig; // grab from encompasing environment
 
-CTATLMS.identifier = 'XBlock';
+/*CTATLMS.identifier = 'XBlock';
 CTATLMS.setValue = function(key,value) {
     // update "local" copy as well because xblock does not update the
     // templated values durring runtime.
@@ -26,4 +26,4 @@ CTATLMS.saveProblemState = function (state) {
 CTATLMS.getProblemState = function (handler) {
     return handler(window.atob(CTATLMS.getValue('saveandrestore')));
 };
-CTATLMS.gradeStudent = window.parent.CTATXBlock.post.report_grade;
+CTATLMS.gradeStudent = window.parent.CTATXBlock.post.report_grade;*/

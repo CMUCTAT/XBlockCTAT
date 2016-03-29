@@ -144,12 +144,15 @@ class CTATXBlock(XBlock):
         # read in template html
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment (html.format(
+            tutor_html=self.get_local_resource_url(self.src)))
+        config = self.resource_string("static/js/CTATConfig.js")
+        frag.add_javascript (config.format(
             self=self,
             tutor_html=self.get_local_resource_url(self.src),
             question_file=self.get_local_resource_url(self.brd),
             student_id=self.ctat_user_id,
             guid=str(uuid.uuid4())))
-        frag.add_javascript (self.resource_string("static/js/CTATXBlock.js"))
+        frag.add_javascript (self.resource_string("static/js/Initialize_CTATXBlock.js"))
         frag.initialize_js('Initialize_CTATXBlock')
         return frag
 
