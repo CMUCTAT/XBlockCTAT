@@ -103,8 +103,6 @@ class CTATXBlock(XBlock):
                             default="", scope=Scope.user_state)
     skillstring = String(help="Internal data blob used by the tracer",
                          default="", scope=Scope.user_info)
-    ctat_user_id = String(help="Anonymous ID used for logging in DataShop.",
-                          default="", scope=Scope.user_info) # unclear how to get EdX's anonymous id, so use our own.
 
     def logdebug (self, aMessage):
         global dbgopen, tmp_file
@@ -136,11 +134,6 @@ class CTATXBlock(XBlock):
 
         Returns a Fragment object containing the HTML to display
         """
-        #xblock_user = self.runtime.service(self,"user").get_current_user()
-        #self.ctat_user_id=xblock_user.opt_attrs['edx-platform.user_id']
-        if self.ctat_user_id=="":
-            self.ctat_user_id = str(uuid.uuid4())
-
         # read in template html
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment (html.format(
@@ -150,7 +143,7 @@ class CTATXBlock(XBlock):
             self=self,
             tutor_html=self.get_local_resource_url(self.src),
             question_file=self.get_local_resource_url(self.brd),
-            student_id=self.ctat_user_id,
+            student_id=self.runtime.anonymous_student_id,
             guid=str(uuid.uuid4())))
         frag.add_javascript (self.resource_string("static/js/Initialize_CTATXBlock.js"))
         frag.initialize_js('Initialize_CTATXBlock')
