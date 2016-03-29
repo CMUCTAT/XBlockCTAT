@@ -193,13 +193,6 @@ class CTATXBlock(XBlock):
         return {'result': 'success'}
 
     @XBlock.json_handler
-    def ctat_save_state(self, data, suffix=''):
-        if "saveandrestore" in data:
-            self.saveandrestore = data["saveandrestore"]
-            return {'result': 'success'}
-        return {'result': 'error'}
-
-    @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
         self.logdebug ("ctat_set_variable ()")
 
