@@ -143,7 +143,7 @@ class CTATXBlock(XBlock):
             self=self,
             tutor_html=self.get_local_resource_url(self.src),
             question_file=self.get_local_resource_url(self.brd),
-            student_id=self.runtime.anonymous_student_id,
+            student_id=self.runtime.anonymous_student_id if hasattr(self.runtime, 'anonymous_student_id') else 'bogus-sdk-id',
             guid=str(uuid.uuid4())))
         frag.add_javascript (self.resource_string("static/js/Initialize_CTATXBlock.js"))
         frag.initialize_js('Initialize_CTATXBlock')
