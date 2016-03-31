@@ -154,14 +154,14 @@ class CTATXBlock(XBlock):
         #self.logdebug ("ctat_grade ()")
         #print('ctat_grade:',data,suffix)
         self.attempted = True
-        self.score = data['value']
-        self.max_problem_steps = data['max_value']
+        self.score = int(data.get('value'))
+        self.max_problem_steps = int(data.get('max_value'))
         self.completed = self.score >= self.max_problem_steps
-        scaled = self.score/self.max_problem_steps
+        scaled = float(self.score)/float(self.max_problem_steps)
         # trying with max of 1.
         event_data = {'value': scaled, 'max_value': 1}
         self.runtime.publish(self, 'grade', event_data)
-        return {'result': 'success', 'state': self.completed}
+        return {'result': 'success', 'finished': self.completed, 'score':scaled}
 
     # -------------------------------------------------------------------
     # TO-DO: change this view to display your data your own way.
@@ -185,6 +185,18 @@ class CTATXBlock(XBlock):
         self.height = data.get('height')
         return {'result': 'success'}
 
+    @XBlock.json_handler
+    def ctat_save_problem_state(self, data, suffix=''):
+        """Called from CTATLMS.saveProblemState."""
+        if data.get('state') is not None:
+            self.saveandrestore = data.get('state')
+            return {'result': 'success'}
+        return {'result': 'failure'}
+
+    @XBlock.json_handler
+    def ctat_get_problem_state(self, data, suffix=''):
+        return {'result': 'success', 'state': self.saveandrestore}
+    
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
         self.logdebug ("ctat_set_variable ()")
