@@ -31,9 +31,9 @@ class CTATXBlock(XBlock):
     """
 
     ### xBlock tag variables
-    width = Integer(help="Width of the StatTutor frame.",
+    width = Integer(help="Width of the tutor frame.",
                     default=690, scope=Scope.content)
-    height = Integer(help="Height of the StatTutor frame.",
+    height = Integer(help="Height of the tutor frame.",
                      default=550, scope=Scope.content)
 
     ### Grading variables
@@ -60,6 +60,8 @@ class CTATXBlock(XBlock):
         values={"min": 0, "step": .1},
         scope=Scope.settings
     ) # weight needs to be set to something
+    #def get_progress(self):
+    #    return Progress(self.score,self.max_problem_steps)
 
     ### Basic interface variables
     src = String(help="The source html file for CTAT interface.",
@@ -69,6 +71,7 @@ class CTATXBlock(XBlock):
                  scope=Scope.settings)
 
     ### CTATConfiguration variables
+    # most of the addressing information should be available from xblock.location (depreciated: xblock.id)
     log_name = String(help="Problem name to log", default="CTATEdXProblem",
                       scope=Scope.settings)
     log_dataset = String(help="Dataset name to log", default="edxdataset",
@@ -125,12 +128,12 @@ class CTATXBlock(XBlock):
         return self.strip_local(self.runtime.local_resource_url(self, url))
 
     # -------------------------------------------------------------------
-    # TO-DO: change this view to display your data your own way.
+    #
     # -------------------------------------------------------------------
 
     def student_view(self, context=None):
         """
-        Create a Fragment used to display a CTAT StatTutor xBlock to a student.
+        Create a Fragment used to display a CTAT xBlock to a student.
 
         Returns a Fragment object containing the HTML to display
         """
@@ -144,6 +147,8 @@ class CTATXBlock(XBlock):
             tutor_html=self.get_local_resource_url(self.src),
             question_file=self.get_local_resource_url(self.brd),
             student_id=self.runtime.anonymous_student_id if hasattr(self.runtime, 'anonymous_student_id') else 'bogus-sdk-id',
+            course_id=unicode(self.scope_ids.usage_id), # probably wants to be parsed.
+            # (example: "block-v1:CMU+Stat001+2016+type@ctatxblock+block@ccd1ca4028e64467965c23d8ffbd1363")
             guid=str(uuid.uuid4())))
         frag.add_javascript (self.resource_string("static/js/Initialize_CTATXBlock.js"))
         frag.initialize_js('Initialize_CTATXBlock')
@@ -164,7 +169,7 @@ class CTATXBlock(XBlock):
         return {'result': 'success', 'finished': self.completed, 'score':scaled}
 
     # -------------------------------------------------------------------
-    # TO-DO: change this view to display your data your own way.
+    #
     # -------------------------------------------------------------------
     def studio_view(self, context=None):
         html = self.resource_string("static/html/ctatstudio.html")
@@ -196,7 +201,7 @@ class CTATXBlock(XBlock):
     @XBlock.json_handler
     def ctat_get_problem_state(self, data, suffix=''):
         return {'result': 'success', 'state': self.saveandrestore}
-    
+
     @XBlock.json_handler
     def ctat_set_variable(self, data, suffix=''):
         self.logdebug ("ctat_set_variable ()")
@@ -244,8 +249,7 @@ class CTATXBlock(XBlock):
         return {'result': 'success'}
 
     # -------------------------------------------------------------------
-    # TO-DO: change this to create the scenarios you'd like to see in the
-    # workbench while developing your XBlock.
+    #
     # -------------------------------------------------------------------
     @staticmethod
     def workbench_scenarios():

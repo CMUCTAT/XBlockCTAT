@@ -49,7 +49,7 @@ function Initialize_CTATXBlock(runtime,element) {
 		//});
 	}
     };
-    $('.stattutor').load(function() { // this is getting fired after initTutor
+    $('.ctatxblock').load(function() { // this is getting fired after initTutor
 	this.contentWindow.CTATTarget = "XBlock"; // needed for ctatloader.js
 	var lms = this.contentWindow.CTATLMS;
 	lms.identifier = 'XBlock';
