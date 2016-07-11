@@ -11,6 +11,7 @@ import glob
 import re
 import socket
 import uuid
+import sys
 
 from string import Template
 
@@ -159,14 +160,27 @@ class CTATXBlock(XBlock):
         #self.logdebug ("ctat_grade ()")
         #print('ctat_grade:',data,suffix)
         self.attempted = True
-        self.score = int(data.get('value'))
+        corrects = int(data.get('value'))
         self.max_problem_steps = int(data.get('max_value'))
-        self.completed = self.score >= self.max_problem_steps
-        scaled = float(self.score)/float(self.max_problem_steps)
-        # trying with max of 1.
-        event_data = {'value': scaled, 'max_value': 1}
-        self.runtime.publish(self, 'grade', event_data)
-        return {'result': 'success', 'finished': self.completed, 'score':scaled}
+        # only change score if it increases.
+        # this is done because corrects should only ever increase and
+        # it deals with issues EdX has with grading, in particular
+        # the multiple identical database entries issue.
+        if corrects > self.score:
+            self.score = corrects
+            self.completed = self.score >= self.max_problem_steps
+            scaled = float(self.score)/float(self.max_problem_steps)
+            # trying with max of 1.
+            event_data = {'value': scaled, 'max_value': 1.0}
+            try:
+                self.runtime.publish(self, 'grade', event_data)
+            except:
+                # return with the error message for debugging purposes.
+                return {'result': 'fail', 'Error': sys.exc_info()[0]}
+            return {'result': 'success', 'finished': self.completed, 'score':scaled}
+        # report a no change situation (out of order or duplicate) with the
+        # current score.
+        return {'result': 'no-change', 'finished': self.completed, 'score':float(self.score)/float(self.max_problem_steps)}
 
     # -------------------------------------------------------------------
     #
