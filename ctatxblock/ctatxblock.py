@@ -1,43 +1,32 @@
-# -------------------------------------------------------------------
-#
-#
-# -------------------------------------------------------------------
+"""
+A XBlock used to server CTAT based tutors.
+"""
 
-import os
-import pprint
-import pkg_resources
-import base64
-import glob
 import re
-import socket
 import uuid
-import sys
+import pkg_resources
 
-from string import Template
-
+# pylint: disable=import-error
+# The xBlock package are availabe in the runtime environment.
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String, Float, Boolean, Any
+from xblock.fields import Scope, Integer, String, Float, Boolean
 from xblock.fragment import Fragment
 
-dbgopen=False;
-tmp_file=None;
 
-# -------------------------------------------------------------------
-#
-#
-# -------------------------------------------------------------------
 class CTATXBlock(XBlock):
     """
     A XBlock providing CTAT tutors.
     """
+    # pylint: disable=too-many-instance-attributes
+    # All of the instance variables are required.
 
-    ### xBlock tag variables
+    # **** xBlock tag variables ****
     width = Integer(help="Width of the tutor frame.",
                     default=690, scope=Scope.content)
     height = Integer(help="Height of the tutor frame.",
                      default=550, scope=Scope.content)
 
-    ### Grading variables
+    # **** Grading variables ****
     has_score = Boolean(default=True, scope=Scope.content)
     icon_class = String(default="problem", scope=Scope.content)
     score = Integer(help="Current count of correctly completed student steps",
@@ -45,9 +34,11 @@ class CTATXBlock(XBlock):
     max_problem_steps = Integer(
         help="Total number of steps",
         scope=Scope.user_state, default=1)
+    max_possible_score = 1
+
     def max_score(self):
         """ The maximum raw score of the problem. """
-        return 1 #self.max_problem_steps
+        return self.max_possible_score
     attempted = Boolean(help="True if at least one step has been completed",
                         scope=Scope.user_state, default=False)
     completed = Boolean(
@@ -60,19 +51,19 @@ class CTATXBlock(XBlock):
               "option point values."),
         values={"min": 0, "step": .1},
         scope=Scope.settings
-    ) # weight needs to be set to something
-    #def get_progress(self):
-    #    return Progress(self.score,self.max_problem_steps)
+    )  # weight needs to be set to something
 
-    ### Basic interface variables
+    # **** Basic interface variables ****
     src = String(help="The source html file for CTAT interface.",
-                 default="public/html/FractionAddition.html", scope=Scope.settings)
+                 default="public/html/FractionAddition.html",
+                 scope=Scope.settings)
     brd = String(help="The behavior graph.",
                  default="public/problem_files/1416.brd",
                  scope=Scope.settings)
 
-    ### CTATConfiguration variables
-    # most of the addressing information should be available from xblock.location (depreciated: xblock.id)
+    # **** CTATConfiguration variables ****
+    # most of the addressing information should be available
+    # from xblock.location (depreciated: xblock.id)
     log_name = String(help="Problem name to log", default="CTATEdXProblem",
                       scope=Scope.settings)
     log_dataset = String(help="Dataset name to log", default="edxdataset",
@@ -102,37 +93,30 @@ class CTATXBlock(XBlock):
     ctat_connection = String(help="", default="javascript",
                              scope=Scope.settings)
 
-    ### user information
+    # **** User Information ****
     saveandrestore = String(help="Internal data blob used by the tracer",
                             default="", scope=Scope.user_state)
     skillstring = String(help="Internal data blob used by the tracer",
                          default="", scope=Scope.user_info)
 
-    def logdebug (self, aMessage):
-        global dbgopen, tmp_file
-        if (dbgopen==False):
-            tmp_file = open("/tmp/edx-tmp-log-ctat.txt", "a", 0)
-            dbgopen=True
-        tmp_file.write (aMessage + "\n")
-
-    def resource_string(self, path):
+    # **** Utility functions and methods ****
+    @staticmethod
+    def resource_string(path):
         """ Read in the contents of a resource file. """
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def strip_local (self, url):
+    @staticmethod
+    def strip_local(url):
         """ Returns the given url with //localhost:port removed. """
-        return re.sub('//localhost(:\d*)?', '', url)
+        return re.sub(r'//localhost(:\d*)?', '', url)
 
-    def get_local_resource_url (self, url):
+    def get_local_resource_url(self, url):
         """ Wrapper for self.runtime.local_resource_url. """
         return self.strip_local(self.runtime.local_resource_url(self, url))
 
-    # -------------------------------------------------------------------
-    #
-    # -------------------------------------------------------------------
-
-    def student_view(self, context=None):
+    # **** xBlock methods ****
+    def student_view(self, dummy_context=None):
         """
         Create a Fragment used to display a CTAT xBlock to a student.
 
@@ -140,25 +124,30 @@ class CTATXBlock(XBlock):
         """
         # read in template html
         html = self.resource_string("static/html/ctatxblock.html")
-        frag = Fragment (html.format(
+        frag = Fragment(html.format(
             tutor_html=self.get_local_resource_url(self.src)))
         config = self.resource_string("static/js/CTATConfig.js")
-        frag.add_javascript (config.format(
+        frag.add_javascript(config.format(
             self=self,
             tutor_html=self.get_local_resource_url(self.src),
             question_file=self.get_local_resource_url(self.brd),
-            student_id=self.runtime.anonymous_student_id if hasattr(self.runtime, 'anonymous_student_id') else 'bogus-sdk-id',
-            course_id=unicode(self.scope_ids.usage_id), # probably wants to be parsed.
-            # (example: "block-v1:CMU+Stat001+2016+type@ctatxblock+block@ccd1ca4028e64467965c23d8ffbd1363")
+            student_id=self.runtime.anonymous_student_id
+            if hasattr(self.runtime, 'anonymous_student_id')
+            else 'bogus-sdk-id',
+            course_id=unicode(self.scope_ids.usage_id),
+            # usage_id probably should be parsed. (example:
+            # "block-v1:CMU+Stat001+2016+type@ctatxblock+block@ccd1ca4028e64467965c23d8ffbd1363")
             guid=str(uuid.uuid4())))
-        frag.add_javascript (self.resource_string("static/js/Initialize_CTATXBlock.js"))
+        frag.add_javascript(self.resource_string(
+            "static/js/Initialize_CTATXBlock.js"))
         frag.initialize_js('Initialize_CTATXBlock')
         return frag
 
     @XBlock.json_handler
-    def ctat_grade(self, data, suffix=''):
-        #self.logdebug ("ctat_grade ()")
-        #print('ctat_grade:',data,suffix)
+    def ctat_grade(self, data, dummy_suffix=''):
+        """
+        Handles updating the grade based on post request from the tutor.
+        """
         self.attempted = True
         corrects = int(data.get('value'))
         self.max_problem_steps = int(data.get('max_value'))
@@ -172,29 +161,33 @@ class CTATXBlock(XBlock):
             scaled = float(self.score)/float(self.max_problem_steps)
             # trying with max of 1.
             event_data = {'value': scaled, 'max_value': 1.0}
+            # pylint: disable=broad-except
+            # The errors that should be checked are django errors, but there
+            # type is not known at this point. This exception is designed
+            # partially to learn what the possible errors are.
             try:
                 self.runtime.publish(self, 'grade', event_data)
-            except:
+            except Exception as err:
                 # return with the error message for debugging purposes.
-                return {'result': 'fail', 'Error': sys.exc_info()[0]}
-            return {'result': 'success', 'finished': self.completed, 'score':scaled}
+                return {'result': 'fail', 'Error': err.message}
+            return {'result': 'success', 'finished': self.completed,
+                    'score': scaled}
         # report a no change situation (out of order or duplicate) with the
         # current score.
-        return {'result': 'no-change', 'finished': self.completed, 'score':float(self.score)/float(self.max_problem_steps)}
+        return {'result': 'no-change', 'finished': self.completed,
+                'score': float(self.score)/float(self.max_problem_steps)}
 
-    # -------------------------------------------------------------------
-    #
-    # -------------------------------------------------------------------
-    def studio_view(self, context=None):
+    def studio_view(self, dummy_context=None):
+        """" Generate what is seen in the Studio view """
         html = self.resource_string("static/html/ctatstudio.html")
         frag = Fragment(html.format(self=self))
-        js = self.resource_string("static/js/ctatstudio.js")
-        frag.add_javascript(unicode(js))
+        studio_js = self.resource_string("static/js/ctatstudio.js")
+        frag.add_javascript(unicode(studio_js))
         frag.initialize_js('CTATXBlockStudio')
         return frag
 
     @XBlock.json_handler
-    def studio_submit(self, data, suffix=''):
+    def studio_submit(self, data, dummy_suffix=''):
         """
         Called when submitting the form in Studio.
         """
@@ -205,7 +198,7 @@ class CTATXBlock(XBlock):
         return {'result': 'success'}
 
     @XBlock.json_handler
-    def ctat_save_problem_state(self, data, suffix=''):
+    def ctat_save_problem_state(self, data, dummy_suffix=''):
         """Called from CTATLMS.saveProblemState."""
         if data.get('state') is not None:
             self.saveandrestore = data.get('state')
@@ -213,60 +206,15 @@ class CTATXBlock(XBlock):
         return {'result': 'failure'}
 
     @XBlock.json_handler
-    def ctat_get_problem_state(self, data, suffix=''):
+    def ctat_get_problem_state(self, dummy_data, dummy_suffix=''):
+        """
+        Return the stored problem state to reconstruct a student's progress.
+        """
         return {'result': 'success', 'state': self.saveandrestore}
 
-    @XBlock.json_handler
-    def ctat_set_variable(self, data, suffix=''):
-        self.logdebug ("ctat_set_variable ()")
-
-        for key in data:
-            #value = base64.b64decode(data[key])
-            value = data[key]
-            self.logdebug("Setting ({}) to ({})".format(key, value))
-            if (key=="href"):
-               self.href = value
-            elif (key=="ctatmodule"):
-               self.ctatmodule = value
-            elif (key=="problem"):
-               self.problem = value
-            elif (key=="dataset"):
-               self.dataset = value
-            elif (key=="level1"):
-               self.level1 = value
-            elif (key=="type1"):
-               self.type1 = value
-            elif (key=="level2"):
-               self.level2 = value
-            elif (key=="type2"):
-               self.type2 = value
-            elif (key=="logurl"):
-               self.logurl = value
-            elif (key=="logtype"):
-               self.logtype = value
-            elif (key=="diskdir"):
-               self.diskdir = value
-            elif (key=="port"):
-               self.port = value
-            elif (key=="remoteurl"):
-               self.remoteurl = value
-            elif (key=="connection"):
-               self.connection = value
-            #elif (key=="src"):
-            #   self.src = value
-            elif (key=="saveandrestore"):
-               self.logdebug ("Received saveandrestore request")
-               self.saveandrestore = value
-            #elif (key=="skillstring"):
-            #  self.skillstring = value
-
-        return {'result': 'success'}
-
-    # -------------------------------------------------------------------
-    #
-    # -------------------------------------------------------------------
     @staticmethod
     def workbench_scenarios():
+        """ Prescribed XBlock method for displaying this in the workbench. """
         return [
             ("CTATXBlock",
              """<vertical_demo>
