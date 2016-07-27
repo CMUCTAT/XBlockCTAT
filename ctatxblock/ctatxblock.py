@@ -20,6 +20,10 @@ class CTATXBlock(XBlock):
     # pylint: disable=too-many-instance-attributes
     # All of the instance variables are required.
 
+    display_name = String(
+        help="Display name of the xBlock",
+        default="CTAT Tutor",
+        scope=Scope.content)
     # **** xBlock tag variables ****
     width = Integer(help="Width of the tutor frame.",
                     default=690, scope=Scope.content)
@@ -125,7 +129,9 @@ class CTATXBlock(XBlock):
         # read in template html
         html = self.resource_string("static/html/ctatxblock.html")
         frag = Fragment(html.format(
-            tutor_html=self.get_local_resource_url(self.src)))
+            tutor_html=self.get_local_resource_url(self.src),
+            width=self.width,
+            height=self.height))
         config = self.resource_string("static/js/CTATConfig.js")
         frag.add_javascript(config.format(
             self=self,
