@@ -7,28 +7,26 @@
  */
 
 var CTATConfig = {{
-    class_name: "DefaultClass", // to replace with edx course code
-    problem_name: "none",
-    school_name: "none",
-    student_problem_id: "none",
+    'class_name': window.$$course_id || "SDK",
+    'connection': "javascript",
+    'problem_name': "{problem_name}",
+    'dataset_level_name1': "{usage_id}",
+    'dataset_level_type1': "Unit",
+    'dataset_name': "{log_dataset}",
 
-    'question_file': "{question_file}",
+    // if window.$$course_id is undefined, then this is in an environment
+    // that should forcibly disable logging (eg) in Studio or in the SDK
+    'Logging': window.$$course_id?"{logtype}":"None", // ClientToService
+    'log_service_url': "{log_url}",
+
+    'school_name': window.location.hostname,
+
+    'question_file': "{question_file}", // BRD information
     'tutoring_service_communication': 'javascript',
     'user_guid': '{student_id}',
-    'resource_spec': "{self.log_name}", // unsure if used
-    'dataset': "{self.log_dataset}",
-    'level1': "{self.log_level1}",
-    'type1': "{self.log_type1}",
-    'level2': "{self.log_level2}",
-    'type2': "{self.log_type2}",
-    'logtype': "{self.logtype}",
-    'distdir': "{self.log_diskdir}",
-    'remoteSocketPort': {self.log_port},
-    'remoteSocketURL': "{self.log_remoteurl}",
-    'connection': "{self.ctat_connection}",
 
-    'skills': "{self.skillstring}",
-    'problem_state_status': "{self.completed}"!=="False"?'complete':"{self.saveandrestore}"!==""?'incomplete':'empty',
-    'session_id': 'ctatxblock_'+"{guid}",
-    'course_id': '{course_id}'
+    'saveandrestore': "{saved_state}",
+    'skills': "{skills}",
+    'problem_state_status': "{completed}"!=="False"?'complete':"{saved_state}"!==""?'incomplete':'empty',
+    'session_id': 'xblockstattutor_'+"{guid}",
 }};
