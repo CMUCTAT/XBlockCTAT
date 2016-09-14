@@ -30,3 +30,10 @@ var CTATConfig = {{
     'problem_state_status': "{completed}"!=="False"?'complete':"{saved_state}"!==""?'incomplete':'empty',
     'session_id': 'xblockstattutor_'+"{guid}",
 }};
+
+try {{
+    var custom_params = JSON.parse('{custom}');
+    CTATConfig = Object.assign(CTATConfig, custom_params);
+}} catch(err) {{
+    console.log('Invalid JSON in custom parameters: ' + err);
+}}

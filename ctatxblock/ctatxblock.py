@@ -166,7 +166,9 @@ class CTATXBlock(XBlock):
             usage_id=unicode(self.scope_ids.usage_id),
             # usage_id probably should be parsed. (example:
             # "block-v1:CMU+Stat001+2016+type@ctatxblock+block@ccd1ca4028e64467965c23d8ffbd1363")
-            guid=str(uuid.uuid4())))
+            guid=str(uuid.uuid4()),
+            custom=self.custom_tutor_parameters # add checks on this
+        ))
         # Add javascript initialization code
         frag.add_javascript(self.resource_string(
             "static/js/Initialize_CTATXBlock.js"))
