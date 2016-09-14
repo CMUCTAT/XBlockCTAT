@@ -6,36 +6,33 @@
 function Initialize_CTATXBlock(runtime,element) {
     var post = {
 	save_problem_state: function(state) {
-	    console.log('save_problem_state',state);
+	    //console.log('save_problem_state',state);
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_save_problem_state'),
 		    data: JSON.stringify({state:state}),
 		    contentType: "application/json; charset=utf-8",
 		    dataType: "json"});
 	},
-	get_problem_state: function() {
-	    return $.ajax({type: "POST",
-			   url: runtime.handlerUrl(element,
-						   'ctat_get_problem_state'),
-			   data: JSON.stringify({}),
-			   contentType: "application/json; charset=utf-8",
-			   dataType: "json"});
-	},
 	report_grade: function(correct_step_count, total_step_count) {
-	    console.log('grade',correct_step_count,total_step_count);
+	    //console.log('grade',correct_step_count,total_step_count);
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_grade'),
 		    data: JSON.stringify({'value': correct_step_count,
 					  'max_value': total_step_count}),
 		    contentType: "application/json; charset=utf-8",
 		    dataType: "json"});
+	},
+	report_skills: function(skills) {
+	    $.ajax({type: "POST",
+		    url: runtime.handlerUrl(element, 'ctat_save_skills'),
+		    data: JSON.stringify({'skills': skills}),
+		    contentType: "application/json; charset=utf-8",
+		    dataType: "json"});
 	}
     };
     $('.ctatxblock').on("load", function() {
-	console.log(CTATConfig, this.src);
 	var ctattutor = new URL(this.src);
 	// put problem state in config
-	console.log('Initialize_CTATXBlock',this.contentWindow,ctattutor.origin);
 	this.contentWindow.postMessage(CTATConfig, ctattutor.origin);
 
 	window.addEventListener("message", function(event) {
@@ -51,32 +48,13 @@ function Initialize_CTATXBlock(runtime,element) {
 	    case "grade":
 		post.report_grade(event.data.input.value, event.data.input.max);
 		break;
+	    case "skills":
+		post.report_skills(event.data.input);
+		break;
 	    default:
 		console.log("unrecognized action:", event.data.action);
 		break;
 	    }
 	}, false);
     });
-    /*$('.ctatxblock').on("load", function() {
-	this.contentWindow.CTATTarget = "XBlock"; // needed for ctatloader.js
-	var lms = this.contentWindow.CTATLMS;
-	lms.identifier = 'XBlock';
-	lms.setValue = function(key,value) {
-	    CTATConfig[key] = value;
-	};
-	lms.getValue = function(key) { return CTATConfig[key]; };
-	lms.saveProblemState = function (state) {
-	    post.save_problem_state(window.btoa(state.problem_state));
-	};
-	lms.getProblemState = function (handler) {
-	    post.get_problem_state().done(function(data) {
-		return handler(window.atob(data.state)); });
-	};
-	lms.gradeStudent = function (correct_step_count, total_step_count) {
-	    post.report_grade(correct_step_count, total_step_count);
-	};
-	// CTATConfig is from CTATConfig.js which is a template that is filled
-	// out by ctatxblock.py
-	this.contentWindow.initTutor(CTATConfig);
-    });*/
 };

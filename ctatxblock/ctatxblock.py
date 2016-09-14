@@ -380,6 +380,8 @@ class CTATXBlock(XBlock):
           A JSON object with a 'result' field with a payload indicating the
           success status.
         """
+        # should add check to de-encode64 the state and see if it is
+        # the expected XML
         if data.get('state') is not None:
             self.saveandrestore = bleach.clean(data.get('state'))
             return {'result': 'success'}
@@ -397,25 +399,10 @@ class CTATXBlock(XBlock):
           A JSON object with a 'result' field with a payload indicating the
           success status.
         """
-        # FIXME: actually insert hooks in code to send this.
         if data.get('skills') is not None:
             self.skillstring = bleach.clean(data.get('skills'), strip=True)
             return {'result': 'success'}
         return {'result': 'failure'}
-
-    @XBlock.json_handler
-    def ctat_get_problem_state(self, dummy_data, dummy_suffix=''):
-        """
-        Return the stored problem state to reconstruct a student's progress.
-
-        Args:
-          self: the CTAT XBlock.
-          dummy_data: unused but required as a XBlock.json_handler.
-          dummy_suffix: unused but required as a XBlock.json_handler.
-        Returns:
-          A JSON object with a 'result' and a 'state' field.
-        """
-        return {'result': 'success', 'state': self.saveandrestore}
 
     @staticmethod
     def workbench_scenarios():
