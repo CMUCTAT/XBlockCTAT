@@ -23,15 +23,11 @@ the devstack or scroll down to those outlined under
 
 ## How to Configure
 
-This particular XBlock only comes with a single fraction addition
-tutor but content developers can use the CTAT tools to automatically
-generate a XBlock based on this code which will use their tutors. See
-https://github.com/CMUCTAT/CTAT/wiki/Logging-And-Deployment#openedx-xblock
-for more information.
-
-One the XBlock is installed, use Studio to add tutors to a course by
+Once the XBlock is installed, use Studio to add tutors to a course by
 navigating to a unit and clicking on `Advanced` and then on
 `ctatxblock`. To change which tutor is deployed, click on `Edit` and
-use the text inputs to specify the interface file and the brd
-file. There are additional spaces for specifying the size of the
-tutor.
+use the text inputs to specify the url to the html interface file and the brd
+file.  These files need to be hosted on a web server accessable by your users and
+use CTAT version 4.1.0 or greater.
+There are additional spaces for specifying the size of the
+tutor, logging information, and advanced configuration options.
