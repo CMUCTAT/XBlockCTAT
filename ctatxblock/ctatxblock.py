@@ -70,14 +70,12 @@ class CTATXBlock(XBlock):
 
     # **** Basic interface variables ****
     src = String(help="The source html file for CTAT interface.",
-                 # default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 # "/Examples/FractionAddition.html",
-                 default="http://www.cs.cmu.edu/~mringenb/tutor/CTATNumberLine.html",
+                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 "/Examples/FractionAddition.html",
                  scope=Scope.settings)
     brd = String(help="The behavior graph.",
-                 # default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 # "/Examples/FractionAddition.brd",
-                 default="http://www.cs.cmu.edu/~mringenb/tutor/CTATNumberLine.brd",
+                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 "/Examples/FractionAddition.brd",
                  scope=Scope.settings)
 
     # **** CTATConfiguration variables ****
