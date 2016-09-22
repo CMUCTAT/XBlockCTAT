@@ -245,7 +245,7 @@ class CTATXBlock(XBlock):
             etype = data.pop('event_type')
             logdata = data #self.validate_custom(json.dumps(data))  # check for valid JSON
             logdata['user_id'] = self.runtime.user_id #self.scope_ids.user_id
-            logdata['component_id'] = self.scope_ids.usage_id #self._get_unique_id()
+            logdata['component_id'] = unicode(self.scope_ids.usage_id) #self._get_unique_id()
             self.runtime.publish(self, "ctatlog", logdata)  # etype
         except KeyError as keyerr:
             return {'result': 'fail', 'error': unicode(keyerr)}
