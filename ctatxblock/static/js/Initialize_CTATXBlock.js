@@ -23,12 +23,14 @@ function Initialize_CTATXBlock(runtime, element) {
 		    dataType: "json"});
 	},
 	log_event: function(aMessage) {
-	    $.ajax({type: "POST",
-		    url: runtime.handlerUrl(element, 'ctat_log'),
-		    data: JSON.stringify({
+	    msg = JSON.stringify({
 			'event_type': 'ctat_log',
 			'action': 'logevent',
-			'message': aMessage}),
+		'message': aMessage});
+	    console.log(msg);
+	    $.ajax({type: "POST",
+		    url: runtime.handlerUrl(element, 'ctat_log'),
+		    data: msg,
 		    contentType: "application/json; charset=utf-8",
 		    dataType: "json"})
 		.done(function(data) {
@@ -65,7 +67,7 @@ function Initialize_CTATXBlock(runtime, element) {
 		post.report_grade(event.data.input.value, event.data.input.max);
 		break;
 	    case "log":
-		post.log_event(event.data.input);
+		post.log_event(JSON.parse(event.data.input));
 		break;
 	    case "skills":
 		post.report_skills(event.data.input);
