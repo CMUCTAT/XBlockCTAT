@@ -263,11 +263,11 @@ class CTATXBlock(XBlock):
             brd=self.brd,
             width=self.width,
             height=self.height,
-            log_url=self.log_url,
-            dataset=self.log_dataset,
-            log_name=self.log_name,
+            #log_url=self.log_url,
+            #dataset=self.log_dataset,
+            #log_name=self.log_name,
             custom=self.custom_tutor_parameters,
-            logging='checked' if self.logtype == "ClientToService" else ''))
+            logging='checked' if self.logging else ''))
         # read in, add, and execute javascript
         studio_js = self.resource_string("static/js/ctatstudio.js")
         frag.add_javascript(unicode(studio_js))
@@ -310,11 +310,11 @@ class CTATXBlock(XBlock):
     @staticmethod
     def validate_logging(enable_logging):
         """Validate that the string is a proper value for enabling logging."""
-        logging = "None"
+        logging = False
         if enable_logging is not None:
             logging = bleach.clean(enable_logging, strip=True)
             if logging.lower() == "true":
-                logging = "ClientToService"
+                logging = True
         return logging
 
     @staticmethod
@@ -365,16 +365,16 @@ class CTATXBlock(XBlock):
             valid_width = self.validate_number(data.get('width'), self.width)
             valid_height = self.validate_number(data.get('height'),
                                                 self.height)
-            valid_logtype = self.validate_logging(data.get('logging'))
-            valid_log_url = self.validate_log_param(data, 'logserver',
-                                                    valid_logtype,
-                                                    self.log_url)
-            valid_log_dataset = self.validate_log_param(data, 'dataset',
-                                                        valid_logtype,
-                                                        self.log_dataset)
-            valid_log_name = self.validate_log_param(data, 'problemname',
-                                                     valid_logtype,
-                                                     self.log_name)
+            valid_logging = self.validate_logging(data.get('logging'))
+            #valid_log_url = self.validate_log_param(data, 'logserver',
+            #                                        valid_logtype,
+            #                                        self.log_url)
+            #valid_log_dataset = self.validate_log_param(data, 'dataset',
+            #                                            valid_logtype,
+            #                                            self.log_dataset)
+            #valid_log_name = self.validate_log_param(data, 'problemname',
+            #                                         valid_logtype,
+            #                                         self.log_name)
             valid_custom = self.validate_custom(data.get('custom'))
         except Exception as err:
             return {'result': 'fail', 'error': unicode(err)}
@@ -384,10 +384,10 @@ class CTATXBlock(XBlock):
         self.brd = valid_brd
         self.width = valid_width
         self.height = valid_height
-        self.logtype = valid_logtype
-        self.log_url = valid_log_url
-        self.log_dataset = valid_log_dataset
-        self.log_name = valid_log_name
+        self.logging = valid_logging
+        #self.log_url = valid_log_url
+        #self.log_dataset = valid_log_dataset
+        #self.log_name = valid_log_name
         self.custom_tutor_parameters = valid_custom
         return {'result': 'success'}
 
