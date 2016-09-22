@@ -23,7 +23,7 @@ var CTATConfig = {{
     'dataset_level_name1': "{block_type}",
     'dataset_level_type1': "Unit",
 
-    'problem_context': "", //"{tutor_html}: {question_file}",
+    'problem_context': "{tutor_html}: {question_file}",
 
     // if window.$$course_id is undefined, then this is in an environment
     // that should forcibly disable logging (eg) in Studio or in the SDK
