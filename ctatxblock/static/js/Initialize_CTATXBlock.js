@@ -3,7 +3,7 @@
  * @param runtime - provided by EdX
  * @param element - provided by EdX
  */
-function Initialize_CTATXBlock(runtime,element) {
+function Initialize_CTATXBlock(runtime, element) {
     var post = {
 	save_problem_state: function(state) {
 	    //console.log('save_problem_state',state);
@@ -21,6 +21,22 @@ function Initialize_CTATXBlock(runtime,element) {
 					  'max_value': total_step_count}),
 		    contentType: "application/json; charset=utf-8",
 		    dataType: "json"});
+	},
+	log_event: function(aMessage) {
+	    $.ajax({type: "POST",
+		    url: runtime.handlerUrl(element, 'ctat_log'),
+		    data: JSON.stringify({
+			'event_type': 'ctat_log',
+			'action': 'logevent',
+			'message': aMessage}),
+		    contentType: "application/json; charset=utf-8",
+		    dataType: "json"})
+		.done(function(data) {
+		    console.log('success on ctat_log: '+data.result);
+		})
+		.fail(function() {
+		    console.log('fail on ctat_log');
+		});
 	},
 	report_skills: function(skills) {
 	    $.ajax({type: "POST",
@@ -48,6 +64,9 @@ function Initialize_CTATXBlock(runtime,element) {
 	    case "grade":
 		post.report_grade(event.data.input.value, event.data.input.max);
 		break;
+	    case "log":
+		post.log_event(event.data.input);
+		break;
 	    case "skills":
 		post.report_skills(event.data.input);
 		break;
@@ -57,4 +76,4 @@ function Initialize_CTATXBlock(runtime,element) {
 	    }
 	}, false);
     });
-};
+}

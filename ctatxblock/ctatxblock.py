@@ -70,27 +70,29 @@ class CTATXBlock(XBlock):
 
     # **** Basic interface variables ****
     src = String(help="The source html file for CTAT interface.",
-                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 "/Examples/FractionAddition.html",
+                 #default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 #"/Examples/FractionAddition.html",
+                 default="http://localhost/~mringenb/ctatex/Examples/CTATNumberLine.html",
                  scope=Scope.settings)
     brd = String(help="The behavior graph.",
-                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 "/Examples/FractionAddition.brd",
+                 default="http://localhost/~mringenb/ctatex/Examples/CTATNumberLine.brd",
+                 #default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 #"/Examples/FractionAddition.brd",
                  scope=Scope.settings)
 
     # **** CTATConfiguration variables ****
     # most of the addressing information should be available
     # from xblock.location (depreciated: xblock.id)
-    log_name = String(help="Problem name to log", default="CTATEdXProblem",
-                      scope=Scope.settings)
-    log_dataset = String(help="Dataset name to log", default="edxdataset",
-                         scope=Scope.settings)
-    log_url = String(help="URL of the logging service",
-                     default="http://pslc-qa.andrew.cmu.edu/log/server",
-                     scope=Scope.settings)
+    #log_name = String(help="Problem name to log", default="CTATEdXProblem",
+    #                  scope=Scope.settings)
+    #log_dataset = String(help="Dataset name to log", default="edxdataset",
+    #                     scope=Scope.settings)
+    #log_url = String(help="URL of the logging service",
+    #                 default="http://pslc-qa.andrew.cmu.edu/log/server",
+    #                 scope=Scope.settings)
     # None, ClientToService, ClientToLogServer, or OLI
-    logtype = String(help="How should data be logged",
-                     default="None", scope=Scope.settings)
+    logging = Boolean(help="If tutor log data should be transmitted to EdX.",
+                      default="True", scope=Scope.settings)
 
     custom_tutor_parameters = String(
         help="Extra parameters set by the author for the tutor. " +
@@ -149,21 +151,25 @@ class CTATXBlock(XBlock):
         # read in the template js
         config = self.resource_string("static/js/CTATConfig.js")
         # fill in the js template
+        usage_id = self.scope_ids.usage_id
+        sdk_usage = isinstance(usage_id, basestring)
         frag.add_javascript(config.format(
-            logtype=self.logtype,
-            log_url=self.log_url,
-            log_dataset=self.log_dataset,
-            problem_name=self.log_name,  # FIXME
+            logtype=self.logging,
+            problem_name=unicode(usage_id),
+            tutor_html=tutor.url,
             question_file=self.brd,
             student_id=self.runtime.anonymous_student_id
             if hasattr(self.runtime, 'anonymous_student_id')
             else 'bogus-sdk-id',  # conditional here in case testing in sdk
+            org=unicode(usage_id.org) if not sdk_usage else usage_id,
+            course=unicode(usage_id.course) if not sdk_usage else usage_id,
+            course_key=unicode(usage_id.course_key) if not sdk_usage else usage_id,
+            run=unicode(usage_id.run) if not sdk_usage else usage_id,
+            block_type=unicode(usage_id.block_type) if not sdk_usage else usage_id,
             saved_state=self.saveandrestore,
             skills=self.skillstring,
             completed=self.completed,
-            usage_id=unicode(self.scope_ids.usage_id),
-            # usage_id probably should be parsed. (example:
-            # "block-v1:CMU+Stat001+2016+type@ctatxblock+block@ccd1ca4028e64467965c23d8ffbd1363")
+            usage_id=unicode(usage_id),
             guid=str(uuid.uuid4()),
             custom=self.custom_tutor_parameters # add checks on this
         ))
@@ -226,6 +232,26 @@ class CTATXBlock(XBlock):
         # current score.
         return {'result': 'no-change', 'finished': self.completed,
                 'score': float(self.score)/float(self.max_problem_steps)}
+
+    @XBlock.json_handler
+    def ctat_log(self, data, dummy_suffix=''):
+        """Publish log messages from a CTAT tutor to EdX log."""
+        if data.get('event_type') is None or\
+           data.get('action') is None or\
+           data.get('message') is None:
+            return {'result': 'fail',
+                    'error': 'Log request message is missing required fields.'}
+        try:
+            etype = data.pop('event_type')
+            logdata = data #self.validate_custom(json.dumps(data))  # check for valid JSON
+            logdata['user_id'] = self.runtime.user_id #self.scope_ids.user_id
+            logdata['component_id'] = self.scope_ids.usage_id #self._get_unique_id()
+            self.runtime.publish(self, "ctatlog", logdata)  # etype
+        except KeyError as keyerr:
+            return {'result': 'fail', 'error': unicode(keyerr)}
+        except Exception as err:
+            return {'result': 'fail', 'error': unicode(err)}
+        return {'result': 'success'}
 
     def studio_view(self, dummy_context=None):
         """" Generate what is seen in the Studio view Edit dialogue. """
