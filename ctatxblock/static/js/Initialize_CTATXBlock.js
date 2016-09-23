@@ -24,21 +24,14 @@ function Initialize_CTATXBlock(runtime, element) {
 	},
 	log_event: function(aMessage) {
 	    msg = JSON.stringify({
-			'event_type': 'ctat_log',
-			'action': 'logevent',
+		'event_type': 'ctat_log',
+		'action': 'logevent',
 		'message': aMessage});
-	    console.log(msg);
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_log'),
 		    data: msg,
 		    contentType: "application/json; charset=utf-8",
-		    dataType: "json"})
-		.done(function(data) {
-		    console.log('success on ctat_log: '+data.result);
-		})
-		.fail(function() {
-		    console.log('fail on ctat_log');
-		});
+		    dataType: "json"});
 	},
 	report_skills: function(skills) {
 	    $.ajax({type: "POST",
