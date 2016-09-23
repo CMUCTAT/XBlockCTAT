@@ -70,27 +70,15 @@ class CTATXBlock(XBlock):
 
     # **** Basic interface variables ****
     src = String(help="The source html file for CTAT interface.",
-                 #default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 #"/Examples/FractionAddition.html",
-                 default="http://localhost/~mringenb/ctatex/Examples/CTATNumberLine.html",
+                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 "/Examples/FractionAddition.html",
                  scope=Scope.settings)
     brd = String(help="The behavior graph.",
-                 default="http://localhost/~mringenb/ctatex/Examples/CTATNumberLine.brd",
-                 #default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
-                 #"/Examples/FractionAddition.brd",
+                 default="https://cdn.rawgit.com/CMUCTAT/CTAT/v4.0.0" +
+                 "/Examples/FractionAddition.brd",
                  scope=Scope.settings)
 
     # **** CTATConfiguration variables ****
-    # most of the addressing information should be available
-    # from xblock.location (depreciated: xblock.id)
-    #log_name = String(help="Problem name to log", default="CTATEdXProblem",
-    #                  scope=Scope.settings)
-    #log_dataset = String(help="Dataset name to log", default="edxdataset",
-    #                     scope=Scope.settings)
-    #log_url = String(help="URL of the logging service",
-    #                 default="http://pslc-qa.andrew.cmu.edu/log/server",
-    #                 scope=Scope.settings)
-    # None, ClientToService, ClientToLogServer, or OLI
     logging = Boolean(help="If tutor log data should be transmitted to EdX.",
                       default="True", scope=Scope.settings)
 
@@ -163,15 +151,17 @@ class CTATXBlock(XBlock):
             else 'bogus-sdk-id',  # conditional here in case testing in sdk
             org=unicode(usage_id.org) if not sdk_usage else usage_id,
             course=unicode(usage_id.course) if not sdk_usage else usage_id,
-            course_key=unicode(usage_id.course_key) if not sdk_usage else usage_id,
+            course_key=unicode(usage_id.course_key)
+            if not sdk_usage else usage_id,
             run=unicode(usage_id.run) if not sdk_usage else usage_id,
-            block_type=unicode(usage_id.block_type) if not sdk_usage else usage_id,
+            block_type=unicode(usage_id.block_type)
+            if not sdk_usage else usage_id,
             saved_state=self.saveandrestore,
             skills=self.skillstring,
             completed=self.completed,
             usage_id=unicode(usage_id),
             guid=str(uuid.uuid4()),
-            custom=self.custom_tutor_parameters # add checks on this
+            custom=self.custom_tutor_parameters  # add checks on this?
         ))
         # Add javascript initialization code
         frag.add_javascript(self.resource_string(
@@ -241,16 +231,19 @@ class CTATXBlock(XBlock):
            data.get('message') is None:
             return {'result': 'fail',
                     'error': 'Log request message is missing required fields.'}
+        # pylint: disable=broad-except
         try:
-            etype = data.pop('event_type')
-            logdata = data #self.validate_custom(json.dumps(data))  # check for valid JSON
-            logdata['user_id'] = self.runtime.user_id #self.scope_ids.user_id
-            logdata['component_id'] = unicode(self.scope_ids.usage_id) #self._get_unique_id()
-            self.runtime.publish(self, "ctatlog", logdata)  # etype
+            data.pop('event_type')
+            logdata = data  # assume that data is already been checked.
+            logdata['user_id'] = self.runtime.user_id
+            logdata['component_id'] = unicode(self.scope_ids.usage_id)
+            self.runtime.publish(self, "ctatlog", logdata)
         except KeyError as keyerr:
             return {'result': 'fail', 'error': unicode(keyerr)}
+        # General mechanism to catch a very broad category of errors.
         except Exception as err:
             return {'result': 'fail', 'error': unicode(err)}
+        # pylint: enable=broad-except
         return {'result': 'success'}
 
     def studio_view(self, dummy_context=None):
@@ -263,9 +256,6 @@ class CTATXBlock(XBlock):
             brd=self.brd,
             width=self.width,
             height=self.height,
-            #log_url=self.log_url,
-            #dataset=self.log_dataset,
-            #log_name=self.log_name,
             custom=self.custom_tutor_parameters,
             logging='checked' if self.logging else ''))
         # read in, add, and execute javascript
@@ -366,15 +356,6 @@ class CTATXBlock(XBlock):
             valid_height = self.validate_number(data.get('height'),
                                                 self.height)
             valid_logging = self.validate_logging(data.get('logging'))
-            #valid_log_url = self.validate_log_param(data, 'logserver',
-            #                                        valid_logtype,
-            #                                        self.log_url)
-            #valid_log_dataset = self.validate_log_param(data, 'dataset',
-            #                                            valid_logtype,
-            #                                            self.log_dataset)
-            #valid_log_name = self.validate_log_param(data, 'problemname',
-            #                                         valid_logtype,
-            #                                         self.log_name)
             valid_custom = self.validate_custom(data.get('custom'))
         except Exception as err:
             return {'result': 'fail', 'error': unicode(err)}
@@ -385,9 +366,6 @@ class CTATXBlock(XBlock):
         self.width = valid_width
         self.height = valid_height
         self.logging = valid_logging
-        #self.log_url = valid_log_url
-        #self.log_dataset = valid_log_dataset
-        #self.log_name = valid_log_name
         self.custom_tutor_parameters = valid_custom
         return {'result': 'success'}
 
