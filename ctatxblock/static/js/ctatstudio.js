@@ -34,20 +34,6 @@ function CTATXBlockStudio(runtime, element)
 	    alert('Height should be at least 100.');
 	    return;
 	}
-	/*if (data.logging) {
-	    if (data.logserver.trim().length <= 0) {
-		alert('When logging is enabled, a log service needs to be specified.');
-		return;
-	    }
-	    if (data.dataset.trim().length <= 0) {
-		alert('When logging is enabled, a dataset name needs to be specified.');
-		return;
-	    }
-	    if (data.problemname.trim().length <= 0) {
-		alert('When logging is enabled, a problem name needs to be specified.');
-		return;
-	    }
-	}*/
 	if (data.custom) {
 	    try {
 		JSON.parse(data.custom);
