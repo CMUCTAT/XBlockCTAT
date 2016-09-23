@@ -6,7 +6,6 @@
 function Initialize_CTATXBlock(runtime, element) {
     var post = {
 	save_problem_state: function(state) {
-	    //console.log('save_problem_state',state);
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_save_problem_state'),
 		    data: JSON.stringify({state:state}),
@@ -14,7 +13,6 @@ function Initialize_CTATXBlock(runtime, element) {
 		    dataType: "json"});
 	},
 	report_grade: function(correct_step_count, total_step_count) {
-	    //console.log('grade',correct_step_count,total_step_count);
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_grade'),
 		    data: JSON.stringify({'value': correct_step_count,
@@ -60,7 +58,7 @@ function Initialize_CTATXBlock(runtime, element) {
 		post.report_grade(event.data.input.value, event.data.input.max);
 		break;
 	    case "log":
-		post.log_event(JSON.parse(event.data.input));
+		post.log_event(event.data.input);
 		break;
 	    case "skills":
 		post.report_skills(event.data.input);
