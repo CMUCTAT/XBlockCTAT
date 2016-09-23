@@ -22,7 +22,7 @@ def package_data(pkg, roots):
 
 setup(
     name='ctatxblock-xblock',
-    version='0.133',
+    version='0.139',
     description='CTAT XBlock',
     packages=[
         'ctatxblock',

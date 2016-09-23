@@ -11,9 +11,9 @@ function CTATXBlockStudio(runtime, element)
 	    width: $(element).find('input#maxwidth').val(),
 	    height: $(element).find('input#maxheight').val(),
 	    logging: $(element).find('input#logging').is(':checked'),
-	    logserver: $(element).find('input#log_url').val(),
-	    dataset: $(element).find('input#log_dataset').val(),
-	    problemname: $(element).find('input#log_name').val(),
+	    //logserver: $(element).find('input#log_url').val(),
+	    //dataset: $(element).find('input#log_dataset').val(),
+	    //problemname: $(element).find('input#log_name').val(),
 	    custom: $(element).find('textarea#extra').val()
 	};
 	if (data.src.trim().length <= 0) {
@@ -34,7 +34,7 @@ function CTATXBlockStudio(runtime, element)
 	    alert('Height should be at least 100.');
 	    return;
 	}
-	if (data.logging) {
+	/*if (data.logging) {
 	    if (data.logserver.trim().length <= 0) {
 		alert('When logging is enabled, a log service needs to be specified.');
 		return;
@@ -47,7 +47,7 @@ function CTATXBlockStudio(runtime, element)
 		alert('When logging is enabled, a problem name needs to be specified.');
 		return;
 	    }
-	}
+	}*/
 	if (data.custom) {
 	    try {
 		JSON.parse(data.custom);

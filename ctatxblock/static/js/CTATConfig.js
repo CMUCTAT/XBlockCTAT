@@ -7,28 +7,37 @@
  */
 
 var CTATConfig = {{
-    'class_name': window.$$course_id || "SDK",
-    'connection': "javascript",
+    // meta
+    'session_id': 'xblockctat_'+"{guid}",
+    'user_guid': '{student_id}',
+
+    // class
+    'class_name': "{course}", //window.$$course_id || "SDK",
+    'school_name': "{org}", //window.location.hostname,
+    'period_name': "{run}",
+    'class_description': 'EdX class',
+
+    // dataset
+    'dataset_name': "{course_key}",
     'problem_name': "{problem_name}",
-    'dataset_level_name1': "{usage_id}",
+    'dataset_level_name1': "{block_type}",
     'dataset_level_type1': "Unit",
-    'dataset_name': "{log_dataset}",
+
+    'problem_context': "{tutor_html}: {question_file}",
 
     // if window.$$course_id is undefined, then this is in an environment
     // that should forcibly disable logging (eg) in Studio or in the SDK
-    'Logging': window.$$course_id?"{logtype}":"None", // ClientToService
-    'log_service_url': "{log_url}",
+    'connection': "javascript",
+    'Logging': "{logtype}"=="True"?"ClientToService":"None",
+    'log_service_url': "edx://localhost",
 
-    'school_name': window.location.hostname,
 
     'question_file': "{question_file}", // BRD information
     'tutoring_service_communication': 'javascript',
-    'user_guid': '{student_id}',
 
     'saveandrestore': "{saved_state}",
     'skills': "{skills}",
     'problem_state_status': "{completed}"!=="False"?'complete':"{saved_state}"!==""?'incomplete':'empty',
-    'session_id': 'xblockstattutor_'+"{guid}",
 }};
 
 try {{
