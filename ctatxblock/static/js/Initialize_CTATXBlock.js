@@ -23,7 +23,7 @@ function Initialize_CTATXBlock(runtime, element) {
 	log_event: function(aMessage) {
 	    msg = JSON.stringify({
 		'event_type': 'ctat_log',
-		'action': 'logevent',
+		'action': 'CTATlogevent',
 		'message': aMessage});
 	    $.ajax({type: "POST",
 		    url: runtime.handlerUrl(element, 'ctat_log'),
