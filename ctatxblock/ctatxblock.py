@@ -142,25 +142,28 @@ class CTATXBlock(XBlock):
         usage_id = self.scope_ids.usage_id
         sdk_usage = isinstance(usage_id, basestring)
         frag.add_javascript(config.format(
-            logtype=self.logging,
-            problem_name=unicode(usage_id),
-            tutor_html=tutor.url,
-            question_file=self.brd,
+            # meta
+            guid=str(uuid.uuid4()),
             student_id=self.runtime.anonymous_student_id
             if hasattr(self.runtime, 'anonymous_student_id')
             else 'bogus-sdk-id',  # conditional here in case testing in sdk
-            org=unicode(usage_id.org) if not sdk_usage else usage_id,
+            # class
             course=unicode(usage_id.course) if not sdk_usage else usage_id,
+            org=unicode(usage_id.org) if not sdk_usage else usage_id,
+            run=unicode(usage_id.run) if not sdk_usage else usage_id,
+            # dataset
             course_key=unicode(usage_id.course_key)
             if not sdk_usage else usage_id,
-            run=unicode(usage_id.run) if not sdk_usage else usage_id,
+            problem_name=unicode(usage_id),
             block_type=unicode(usage_id.block_type)
             if not sdk_usage else usage_id,
+            tutor_html=tutor.url,
+            # runtime
+            question_file=self.brd,
+            logtype=self.logging,
             saved_state=self.saveandrestore,
             skills=self.skillstring,
             completed=self.completed,
-            usage_id=unicode(usage_id),
-            guid=str(uuid.uuid4()),
             custom=self.custom_tutor_parameters  # add checks on this?
         ))
         # Add javascript initialization code
@@ -306,18 +309,6 @@ class CTATXBlock(XBlock):
             if logging.lower() == "true":
                 logging = True
         return logging
-
-    @staticmethod
-    def validate_log_param(data, param, logging, default):
-        """ Validate the given logging parameter if logging is enabled. """
-        log_param = default
-        if data.get(param) is not None:
-            log_param = bleach.clean(data.get(param), strip=True)
-        if logging != "None":
-            if len(log_param) <= 0:
-                raise Exception('No specified ' + param +
-                                ' when logging is enabled.')
-        return log_param
 
     @staticmethod
     def validate_custom(json_string):

@@ -12,8 +12,8 @@ var CTATConfig = {{
     'user_guid': '{student_id}',
 
     // class
-    'class_name': "{course}", //window.$$course_id || "SDK",
-    'school_name': "{org}", //window.location.hostname,
+    'class_name': "{course}",
+    'school_name': "{org}",
     'period_name': "{run}",
     'class_description': 'EdX class',
 
@@ -25,12 +25,13 @@ var CTATConfig = {{
 
     'problem_context': "{tutor_html}: {question_file}",
 
+    // runtime
+    'connection': "javascript",
     // if window.$$course_id is undefined, then this is in an environment
     // that should forcibly disable logging (eg) in Studio or in the SDK
-    'connection': "javascript",
+    'Logging': window.$$course_id?("{logtype}"=="True"?"ClientToService":"None"):"None",
     'Logging': "{logtype}"=="True"?"ClientToService":"None",
     'log_service_url': "edx://localhost",
-
 
     'question_file': "{question_file}", // BRD information
     'tutoring_service_communication': 'javascript',
