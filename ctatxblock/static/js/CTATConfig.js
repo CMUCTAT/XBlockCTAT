@@ -31,7 +31,7 @@ var CTATConfig = {{
     // that should forcibly disable logging (eg) in Studio or in the SDK
     'Logging': window.$$course_id?("{logtype}"=="True"?"ClientToService":"None"):"None",
     'Logging': "{logtype}"=="True"?"ClientToService":"None",
-    'log_service_url': "edx://localhost",
+    'log_service_url': "",
 
     'question_file': "{question_file}", // BRD information
     'tutoring_service_communication': 'javascript',
